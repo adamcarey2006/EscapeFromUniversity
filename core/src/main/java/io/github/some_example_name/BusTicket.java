@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
-
 /**
  * <code> BusTicket </code> represents the ticket used to allow player to board
  * bus and win the game, containing both the actual sprite the user can interact
