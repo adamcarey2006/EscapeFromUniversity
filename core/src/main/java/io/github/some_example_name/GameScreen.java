@@ -58,6 +58,7 @@ public class GameScreen implements Screen {
 	private NPC friend;
 	private int timesCaughtByDean = 0;
 	private BitmapFont catchCounterFont;
+    private NPC sign;
 
 	/**
 	 * Constructor for <code> GameScreen </code>, using the game creator
@@ -81,7 +82,8 @@ public class GameScreen implements Screen {
 		player = new Player(145, 70);
 		locker = new Locker(495, 575);
 		dean = new Dean(90, 450, player, this);
-		friend = new NPC(560, 300);
+		friend = new NPC(560, 300,"NPC.png", "Hello friend, remember where\n you dropped your ticket\nI think it was in a bush near\n your house!");
+        sign = new NPC(175, 200, "signpost.png", "North - Bus stop\nEast - Campus");
 
 		catchCounterFont = new BitmapFont();
 		catchCounterFont.getData().setScale(1.5f);
@@ -150,6 +152,7 @@ public class GameScreen implements Screen {
 		}
 
 		friend.update(player);
+        sign.update(player);
 		dean.update(delta);
 
 		if (player.getPosition().dst(dean.getPosition()) < 16f) {
@@ -234,6 +237,7 @@ public class GameScreen implements Screen {
 		locker.render(batch);
 		dean.render(batch);
 		friend.render(batch);
+        sign.render(batch);
 		player.render(batch);
 
 		if (busTicket != null && busTicket.isCollected()) {
@@ -427,6 +431,7 @@ public class GameScreen implements Screen {
 		dean.dispose();
 		catchCounterFont.dispose();
 		friend.dispose();
+        sign.dispose();
 		if (busTicket != null) { busTicket.dispose(); }
 	}
 
