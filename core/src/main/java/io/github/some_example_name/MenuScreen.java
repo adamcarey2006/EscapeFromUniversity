@@ -66,15 +66,17 @@ public class MenuScreen implements Screen {
 		batch.begin();
 		font.draw(batch, "Escape from University", 170, 350);
 		font.draw(batch, "Press SPACE to Start", 175, 250);
-		font.draw(batch, "Press ESC to Exit", 198, 200);
-        font.draw(batch, "Press A to see Achievements", 170, 150);
+		font.draw(batch, "Press ESC to Exit", 175, 200);
+        font.draw(batch, "Press A to see Achievements", 175, 150);
 		batch.end();
 
 		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 		    game.setScreen(new TutorialScreen(game));
 		} else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
 		    Gdx.app.exit();
-		}
+		} else if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
+            game.setScreen(new Achievement(game));
+        }
 	}
 
 	/**
