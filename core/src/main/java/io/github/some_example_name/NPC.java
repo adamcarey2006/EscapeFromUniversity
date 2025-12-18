@@ -18,70 +18,66 @@ public class NPC {
 	private Rectangle bounds;
 	private BitmapFont font;
 	private boolean showMessage = false;
-    private String speech;
+	private String speech;
 
 	/**
 	 * Constructor for <code> NPC </code>, with a set of coordinates.
+	 * 
 	 * @param x Horizontal position for NPC to spawn in.
 	 * @param y Vertical position for NPC to spawn in.
 	 */
 	public NPC(float x, float y, String sprite, String Speech) {
 		texture = new Texture(sprite);
 		position = new Vector2(x, y);
-		bounds = new Rectangle(x,y,texture.getWidth(), texture.getHeight());
+		bounds = new Rectangle(x, y, texture.getWidth(), texture.getHeight());
 		font = new BitmapFont();
-        speech = Speech;
+		speech = Speech;
 	}
 
 	/**
 	 * Update if the dialog is shown to player depending on player position
 	 * and if the E key has been pressed recently.
+	 * 
 	 * @param player Player object.
 	 */
-	public void update(Player player){
-		if (
-			player.getPosition().dst(position) < 50f &&
-			Gdx.input.isKeyJustPressed(Input.Keys.E)
-		)
-		{
-		    showMessage = true;
+	public void update(Player player) {
+		if (player.getPosition().dst(position) < 50f &&
+				Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+			showMessage = true;
 		}
 
-		if(showMessage && player.getPosition().dst(position) > 60f){
-		    showMessage = false;
+		if (showMessage && player.getPosition().dst(position) > 60f) {
+			showMessage = false;
 		}
 	}
 
 	/**
-	 * Convenience method to be called by the game screen's <code> render()
-	 * </code> method, to draw the NPC's sprite and it's dialog using a
-	 * SpriteBatch at the current player coordinates.
+	 * Draws the NPC's sprite and its dialog using a SpriteBatch at the current
+	 * player coordinates.
+	 * 
 	 * @param batch SpriteBatch used by application to render all sprites.
-	 * @see com.badlogic.gdx.graphics.g2d.SpriteBatch SpriteBatch
-	 * @see com.badlogic.gdx.Screen#render Screen.render().
 	 */
-	public void render(SpriteBatch batch){
+	public void render(SpriteBatch batch) {
 		batch.draw(texture, position.x, position.y);
-		if (showMessage){
-		    font.draw(
-			batch,
-                speech,
-			position.x - 100, position.y + texture.getHeight() + 40);
+		if (showMessage) {
+			font.draw(
+					batch,
+					speech,
+					position.x - 100, position.y + texture.getHeight() + 40);
 		}
 	}
 
 	/**
-	 * Convenience method to be called by application to dispose of textures
-	 * of NPC's sprites and dialog when the application's dispose method is called.
-	 * @see com.badlogic.gdx.Screen#dispose Screen.dispose().
+	 * Dispose of textures of NPC's sprites and dialog.
 	 */
-	public void dispose(){
+	public void dispose() {
 		texture.dispose();
 		font.dispose();
 	}
 
 	/**
 	 * Get the NPC's position in world.
+	 * 
 	 * @return The players x-by-y coordinates as a 2D vector.
 	 */
 	public Vector2 getPosition() {
@@ -90,6 +86,7 @@ public class NPC {
 
 	/**
 	 * Get NPC's collision box.
+	 * 
 	 * @return Rectangle bounds of NPC.
 	 */
 	public Rectangle getBounds() {

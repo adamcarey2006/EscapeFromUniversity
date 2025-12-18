@@ -12,7 +12,6 @@ public class MyGame extends Game {
 	/** Create game, starting at the menu score. */
 	@Override
 	public void create() {
-        int[] achLog = {0,0,0,0};
-		setScreen(new MenuScreen(this, achLog));
+		setScreen(new MenuScreen(this));
 	}
 }

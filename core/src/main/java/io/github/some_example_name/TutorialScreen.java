@@ -9,10 +9,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-/**
- * 
- */
-
 public class TutorialScreen implements Screen {
     private final MyGame game;
     private OrthographicCamera camera;
@@ -21,15 +17,16 @@ public class TutorialScreen implements Screen {
     private FitViewport viewport;
 
     private final int MENU_WIDTH = 790;
-	private final int MENU_HEIGHT = 480;
+    private final int MENU_HEIGHT = 480;
+    private String username;
 
-    public TutorialScreen(MyGame game) {
+    public TutorialScreen(MyGame game, String username) {
         this.game = game;
+        this.username = username;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, MENU_WIDTH, MENU_HEIGHT);
         batch = new SpriteBatch();
 
-        //load the tutorial screen image
         tutorialImage = new Texture("How to Play Screen.png");
 
         viewport = new FitViewport(MENU_WIDTH, MENU_HEIGHT, camera);
@@ -40,20 +37,18 @@ public class TutorialScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		camera.update();
-		batch.setProjectionMatrix(camera.combined);    
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
-        //draw the image to fill the screen
         batch.draw(tutorialImage, 0, 0, MENU_WIDTH, MENU_HEIGHT);
         batch.end();
 
-        //once space bar is pressed load the maze game
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-		    game.setScreen(new GameScreen(game));
+            game.setScreen(new GameScreen(game, username));
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-		    Gdx.app.exit(); //user can go back to the start menu if they choose
-		}
+            Gdx.app.exit();
+        }
     }
 
     @Override
@@ -67,20 +62,19 @@ public class TutorialScreen implements Screen {
         tutorialImage.dispose();
     }
 
-    @Override
-    public void show(){} //show main menu screen
+    public void show() {
+    }
 
     @Override
-    public void pause(){} //not yet implemented
+    public void pause() {
+    }
 
     @Override
-    public void resume(){}
+    public void resume() {
+    }
 
     @Override
-    public void hide(){}
-
-
-
-
+    public void hide() {
+    }
 
 }
