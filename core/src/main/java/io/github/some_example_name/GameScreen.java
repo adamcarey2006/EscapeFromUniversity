@@ -20,9 +20,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-/** <code> GameScreen </code> implements the main gameplay logic and rendering as one class,
- * to process user input, and redraw the frames and update the game asset states as
+/**
+ * <code> GameScreen </code> implements the main gameplay logic and rendering as
+ * one class,
+ * to process user input, and redraw the frames and update the game asset states
+ * as
  * the game progresses.
+ * 
  * @see com.badlogic.gdx.Screen Screen.
  */
 
@@ -58,19 +62,20 @@ public class GameScreen implements Screen {
 	private NPC friend;
 	private int timesCaughtByDean = 0;
 	private BitmapFont catchCounterFont;
-    private NPC sign;
+	private NPC sign;
 
 	/**
 	 * Constructor for <code> GameScreen </code>, using the game creator
 	 * in <code> MyGame </code> to create all main game and UI assets.
+	 * 
 	 * @param game Game creator.
 	 */
-	public GameScreen(MyGame game) {
+	public GameScreen(MyGame game, String username) {
 		this.game = game;
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, MAP_WIDTH, MAP_HEIGHT);
-		camera.zoom=0.5f;
+		camera.zoom = 0.5f;
 		camera.update();
 
 		tiledMap = new TmxMapLoader().load("Tile Maps/Final Game Map - Maze.tmx");
@@ -79,11 +84,12 @@ public class GameScreen implements Screen {
 		viewport = new FitViewport(MAP_WIDTH, MAP_HEIGHT, camera);
 
 		batch = new SpriteBatch();
-		player = new Player(145, 70);
+		player = new Player(145, 70, username);
 		locker = new Locker(495, 575);
 		dean = new Dean(90, 450, player, this);
-		friend = new NPC(560, 300,"NPC.png", "Hello friend, remember where\n you dropped your ticket\nI think it was in a bush near\n your house!");
-        sign = new NPC(175, 200, "signpost.png", "North - Bus stop\nEast - Campus");
+		friend = new NPC(560, 300, "NPC.png", "Hey " + player.getUsername()
+				+ "!\nDon't forget your bus ticket...\nIt must've flown out your window again.");
+		sign = new NPC(175, 200, "signpost.png", "North - Bus stop\nEast - Campus");
 
 		catchCounterFont = new BitmapFont();
 		catchCounterFont.getData().setScale(1.5f);
@@ -93,13 +99,13 @@ public class GameScreen implements Screen {
 
 		MapObject ticketObject = eventObjects.get("BusTicket");
 		if (ticketObject != null && ticketObject instanceof RectangleMapObject) {
-		    RectangleMapObject rect = (RectangleMapObject) ticketObject;
-		    busTicket = new BusTicket(rect.getRectangle().x, rect.getRectangle().y);
+			RectangleMapObject rect = (RectangleMapObject) ticketObject;
+			busTicket = new BusTicket(rect.getRectangle().x, rect.getRectangle().y);
 		}
 
 		MapObject busObject = eventObjects.get("Bus");
 		if (busObject != null && busObject instanceof RectangleMapObject) {
-		    this.busInteractionArea = ((RectangleMapObject) busObject).getRectangle();
+			this.busInteractionArea = ((RectangleMapObject) busObject).getRectangle();
 		}
 
 		uiSkin = new Skin(Gdx.files.internal("ui/uiskin.json"));
@@ -108,12 +114,13 @@ public class GameScreen implements Screen {
 		uiTable.setFillParent(true);
 		uiStage.addActor(uiTable);
 		gameTimer = new GameTimer(uiSkin, uiTable);
-		uiTable.top().right().pad(10,0,0,10);
+		uiTable.top().right().pad(10, 0, 0, 10);
 	}
 
 	/**
 	 * Update game state from last frame, and render a new frame for the Screen
 	 * using updated assets.
+	 * 
 	 * @param delta Time in seconds since last frame finished rendering.
 	 * @see com.badlogic.gdx.Screen#render Screen.render().
 	 */
@@ -152,42 +159,40 @@ public class GameScreen implements Screen {
 		}
 
 		friend.update(player);
-        sign.update(player);
+		sign.update(player);
 		dean.update(delta);
 
 		if (player.getPosition().dst(dean.getPosition()) < 16f) {
-		    player.getPosition().set(145,70);
+			player.getPosition().set(145, 70);
 			timesCaughtByDean++;
-		    dean.resetToStart(timesCaughtByDean); //send the dean back to his starting position or other side of the map to ensure he can't spawn camp the player
+			dean.resetToStart(timesCaughtByDean); // send the dean back to his starting position or other side of the
+													// map to ensure he can't spawn camp the player
 		}
 
 		locker.update(player, delta);
 
 		if (busTicket != null) {
-		    if (!busTicket.isCollected()) {
-			if (player.getPosition().dst(busTicket.getPosition()) < 16) {
-			    busTicket.discover();
-			    canPickUpTicket = true;
+			if (!busTicket.isCollected()) {
+				if (player.getPosition().dst(busTicket.getPosition()) < 16) {
+					busTicket.discover();
+					canPickUpTicket = true;
+				} else {
+					canPickUpTicket = false;
+				}
 			} else {
-			    canPickUpTicket = false;
-			}
-		    } else {
-			Rectangle playerRect = new Rectangle(
-				player.getPosition().x,
-				player.getPosition().y,
-				16,
-				16
-			);
+				Rectangle playerRect = new Rectangle(
+						player.getPosition().x,
+						player.getPosition().y,
+						16,
+						16);
 
-			if (
-				busInteractionArea != null &&
-				playerRect.overlaps(busInteractionArea)
-			) {
-			    canEndGame = true;
-			} else {
-			    canEndGame = false;
+				if (busInteractionArea != null &&
+						playerRect.overlaps(busInteractionArea)) {
+					canEndGame = true;
+				} else {
+					canEndGame = false;
+				}
 			}
-		    }
 		}
 
 		camera.position.set(player.getPosition().x, player.getPosition().y, 0);
@@ -199,45 +204,69 @@ public class GameScreen implements Screen {
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 
-		//switch to screen coordinates for the UI elements
+		// switch to screen coordinates for the UI elements
 		batch.setProjectionMatrix(uiStage.getCamera().combined);
 
-		//draw the three events encountered checklists in the top left hand corner of the screen
-		//events get updates using a ternary operator which is like a condensed if/else statement -> it is set out like: (condition ? vali_if_true : value_if_false)
-		font.draw(batch, "Positive Event Encountered = " + (locker.isBoostActive() ? "1" : "0") + "/1", 35, 630);//this means if the locker boost is active (the bus ticket has been picked up) display that the event 1/1 has been enocuntered otherwide 0/1
+		// draw the three events encountered checklists in the top left hand corner of
+		// the screen
+		// events get updates using a ternary operator which is like a condensed if/else
+		// statement -> it is set out like: (condition ? vali_if_true : value_if_false)
+		font.draw(batch, "Positive Event Encountered = " + (locker.isBoostActive() ? "1" : "0") + "/1", 35, 630);// this
+																													// means
+																													// if
+																													// the
+																													// locker
+																													// boost
+																													// is
+																													// active
+																													// (the
+																													// bus
+																													// ticket
+																													// has
+																													// been
+																													// picked
+																													// up)
+																													// display
+																													// that
+																													// the
+																													// event
+																													// 1/1
+																													// has
+																													// been
+																													// enocuntered
+																													// otherwide
+																													// 0/1
 		font.draw(batch, "Negative Event Encountered = " + (timesCaughtByDean > 0 ? "1" : "0") + "/1", 35, 610);
 		font.draw(batch, "Hidden Event Encountered = " + (busTicket.isCollected() ? "1" : "0") + "/1", 35, 590);
 
-		//switch back to the game coordinates for game objects
+		// switch back to the game coordinates for game objects
 		batch.setProjectionMatrix(camera.combined);
 
 		if (busTicket != null) {
-		    busTicket.render(batch);
+			busTicket.render(batch);
 		}
 
 		if (canPickUpTicket) {
-		    font.draw(
-			batch,
-			"Press E to pick up",
-			player.getPosition().x - 50,
-			player.getPosition().y + 30
-		   );
+			font.draw(
+					batch,
+					"Press E to pick up",
+					player.getPosition().x - 50,
+					player.getPosition().y + 30);
 		}
 
 		if (canEndGame) {
-		    font.draw(
-			batch,
-			"Press E to use ticket",
-			player.getPosition().x - 50,
-			player.getPosition().y + 30
-		    );
+			font.draw(
+					batch,
+					"Press E to use ticket",
+					player.getPosition().x - 50,
+					player.getPosition().y + 30);
 		}
 
-		//Messages will appear on top by rendering player last.
+		// Messages will appear on top by rendering player last.
 		locker.render(batch);
 		dean.render(batch);
 		friend.render(batch);
-        sign.render(batch);
+		sign.render(batch);
 		player.render(batch);
 
 		if (busTicket != null && busTicket.isCollected()) {
@@ -256,7 +285,6 @@ public class GameScreen implements Screen {
 			game.setScreen(new MenuScreen(game));
 		}
 
-
 		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
 			game.setScreen(new MenuScreen(game));
 		}
@@ -273,75 +301,75 @@ public class GameScreen implements Screen {
 	 * Move the player and interacting with the world and menus every frame when
 	 * the corrosponding keys are pressed:
 	 * <ul>
-	 * <li> WASD - Move Character Up/Left/Down/Right.</li>
-	 * <li> E - Interact with items.</li>
-	 * <li> Esc - Pause Game.</li>
+	 * <li>WASD - Move Character Up/Left/Down/Right.</li>
+	 * <li>E - Interact with items.</li>
+	 * <li>Esc - Pause Game.</li>
 	 * </ul>
 	 */
 	private void handleInput() {
 		float moveSpeed = 1f;
-		if (locker != null && locker.isBoostActive()){
-		    moveSpeed = 2f;
+		if (locker != null && locker.isBoostActive()) {
+			moveSpeed = 2f;
 		}
 
 		float newX = player.getPosition().x;
 		float newY = player.getPosition().y;
 
 		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            float tmpSpeed = moveSpeed;
-            if (Gdx.input.isKeyPressed(Input.Keys.A) | Gdx.input.isKeyPressed(Input.Keys.D)) {
-                moveSpeed = moveSpeed * 0.70710678118f;
-            }
-		    newY += moveSpeed;
-		    player.setDirection(Player.Direction.UP);
-            moveSpeed = tmpSpeed;
-        }
+			float tmpSpeed = moveSpeed;
+			if (Gdx.input.isKeyPressed(Input.Keys.A) | Gdx.input.isKeyPressed(Input.Keys.D)) {
+				moveSpeed = moveSpeed * 0.70710678118f;
+			}
+			newY += moveSpeed;
+			player.setDirection(Player.Direction.UP);
+			moveSpeed = tmpSpeed;
+		}
 
 		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            float tmpSpeed = moveSpeed;
-            if (Gdx.input.isKeyPressed(Input.Keys.A) | Gdx.input.isKeyPressed(Input.Keys.D)) {
-                moveSpeed = moveSpeed * 0.70710678118f;
-            }
-		    newY -= moveSpeed;
-		    player.setDirection(Player.Direction.DOWN);
-            moveSpeed = tmpSpeed;
-        }
+			float tmpSpeed = moveSpeed;
+			if (Gdx.input.isKeyPressed(Input.Keys.A) | Gdx.input.isKeyPressed(Input.Keys.D)) {
+				moveSpeed = moveSpeed * 0.70710678118f;
+			}
+			newY -= moveSpeed;
+			player.setDirection(Player.Direction.DOWN);
+			moveSpeed = tmpSpeed;
+		}
 
 		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-		    newX -= moveSpeed;
-		    player.setDirection(Player.Direction.LEFT);
+			newX -= moveSpeed;
+			player.setDirection(Player.Direction.LEFT);
 		}
 
 		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-		    newX += moveSpeed;
-		    player.setDirection(Player.Direction.RIGHT);
+			newX += moveSpeed;
+			player.setDirection(Player.Direction.RIGHT);
 		}
 
 		if (canPickUpTicket && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-		    busTicket.collect();
-		    canPickUpTicket = false;
+			busTicket.collect();
+			canPickUpTicket = false;
 		}
 
 		// Change pause functionality to use the P key, include this in docstrings
-    	if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
-        	isPaused = !isPaused; // Toggle pause state
-        	return; // Skip other input handling when toggling pause
-    	}
+		if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+			isPaused = !isPaused; // Toggle pause state
+			return; // Skip other input handling when toggling pause
+		}
 
 		if (isPaused) {
-        	return; // Do not process input if the game is paused
-    	}
+			return; // Do not process input if the game is paused
+		}
 
 		else if (canEndGame && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-		    int finalScore = calculateFinalScore();
+			int finalScore = calculateFinalScore();
 			int timeRemaining = (int) gameTimer.getTimeLeft();
 			int timesCaught = getTimesCaughtByDean();
-
-			game.setScreen(new WinScreen(game, finalScore, timeRemaining, timesCaught));
+			// send the player to the win screen
+			game.setScreen(new WinScreen(game, finalScore, timeRemaining, timesCaught, player.getUsername()));
 		}
 
 		if (!isCellBlocked(newX, newY)) {
-		    player.getPosition().set(newX, newY);
+			player.getPosition().set(newX, newY);
 		}
 	}
 
@@ -349,24 +377,27 @@ public class GameScreen implements Screen {
 	 * Returns if the cell at a given coordinate in the world allows an entity
 	 * to move onto it.Useful for checking collisions when moving player or another
 	 * entity.
+	 * 
 	 * @param x Horizontal position of cell in the world.
 	 * @param y Vertical position of cell in the world.
-	 * @return True if cell blocks entities to move onto it, False if entities can move onto it.
+	 * @return True if cell blocks entities to move onto it, False if entities can
+	 *         move onto it.
 	 */
 	public boolean isCellBlocked(float x, float y) {
 		for (int i = 0; i < tiledMap.getLayers().getCount(); i++) {
-		    if (tiledMap.getLayers().get(i) instanceof TiledMapTileLayer) {
-			TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(i);
-			int tileX = (int) ((x + 8) / layer.getTileWidth());
-			int tileY = (int) ((y + 8) / layer.getTileHeight());
-			TiledMapTileLayer.Cell cell = layer.getCell(tileX, tileY);
+			if (tiledMap.getLayers().get(i) instanceof TiledMapTileLayer) {
+				TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(i);
+				int tileX = (int) ((x + 8) / layer.getTileWidth());
+				int tileY = (int) ((y + 8) / layer.getTileHeight());
+				TiledMapTileLayer.Cell cell = layer.getCell(tileX, tileY);
 
-			if (cell != null && cell.getTile() != null) {
-			    if (cell.getTile().getProperties().containsKey("collidable") || layer.getProperties().containsKey("collidable")) {
-				return true;
-			    }
+				if (cell != null && cell.getTile() != null) {
+					if (cell.getTile().getProperties().containsKey("collidable")
+							|| layer.getProperties().containsKey("collidable")) {
+						return true;
+					}
+				}
 			}
-		    }
 		}
 		return false;
 	}
@@ -376,26 +407,30 @@ public class GameScreen implements Screen {
 	 */
 	public int calculateFinalScore() {
 
-		//convert the time remaining into seconds to have as the player's score
+		// convert the time remaining into seconds to have as the player's score
 		int timeRemainingSeconds = (int) gameTimer.getTimeLeft();
 
 		int minutes = (int) (timeRemainingSeconds / 60);
 		int seconds = (int) (timeRemainingSeconds % 60);
-		int timeScore = (minutes * 100) + seconds; //this means 3:24 left on the clock gives a score of 324 before penalties are taken into account
+		int timeScore = (minutes * 100) + seconds; // this means 3:24 left on the clock gives a score of 324 before
+													// penalties are taken into account
 
-		//calculate the penalty to be applied from the number of times the player gets caught by the dean
-		int deanPenalty = timesCaughtByDean * 5; //5 marks taken off per time caught
+		// calculate the penalty to be applied from the number of times the player gets
+		// caught by the dean
+		int deanPenalty = timesCaughtByDean * 5; // 5 marks taken off per time caught
 
-		//final score calculation
+		// final score calculation
 		int finalScore = timeScore - deanPenalty;
 
-		//make sure the score can't go below 0 which could happen if the dean catches you enough times
+		// make sure the score can't go below 0 which could happen if the dean catches
+		// you enough times
 		return Math.max(0, finalScore);
 	}
 
 	/**
 	 * Resize UI and game map viewports when the window size is changed.
-	 * @param width Current width of window.
+	 * 
+	 * @param width  Current width of window.
 	 * @param height Current height of window.
 	 * @see com.badlogic.gdx.Screen#resize Screen.resize().
 	 */
@@ -417,6 +452,7 @@ public class GameScreen implements Screen {
 	/**
 	 * Dipose of all assets and UI elements when game screen is left i.e
 	 * when the player wins the game or quits.
+	 * 
 	 * @see com.badlogic.gdx.Screen#dispose Screen.dispose().
 	 */
 	@Override
@@ -431,23 +467,29 @@ public class GameScreen implements Screen {
 		dean.dispose();
 		catchCounterFont.dispose();
 		friend.dispose();
-        sign.dispose();
-		if (busTicket != null) { busTicket.dispose(); }
+		sign.dispose();
+		if (busTicket != null) {
+			busTicket.dispose();
+		}
 	}
 
 	/** Unimplemented */
 	@Override
-	public void show() {}
+	public void show() {
+	}
 
 	/** Unimplemented */
 	@Override
-	public void pause() {}
+	public void pause() {
+	}
 
 	/** Unimplemented */
 	@Override
-	public void resume() {}
+	public void resume() {
+	}
 
 	/** Unimplemented */
 	@Override
-	public void hide() {}
+	public void hide() {
+	}
 }
