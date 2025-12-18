@@ -15,6 +15,7 @@ public class Achievement implements Screen {
     private SpriteBatch batch;
     private BitmapFont font;
     private FitViewport viewport;
+    private int[] achLog;
 
     private final int MENU_WIDTH = 640;
     private final int MENU_HEIGHT = 480;
@@ -25,8 +26,9 @@ public class Achievement implements Screen {
      * <code> MyGame </code> to create Achievement screen.
      * @param game Game creator.
      */
-    public Achievement(MyGame game) {
+    public Achievement(MyGame game, int[] achLog) {
         this.game = game;
+        this.achLog = achLog;
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, MENU_WIDTH, MENU_HEIGHT);
@@ -65,7 +67,7 @@ public class Achievement implements Screen {
         batch.end();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            game.setScreen(new MenuScreen(game));
+            game.setScreen(new MenuScreen(game, achLog));
         }
     }
 

@@ -21,6 +21,7 @@ public class MenuScreen implements Screen {
 	private SpriteBatch batch;
 	private BitmapFont font;
 	private FitViewport viewport;
+    private int[] achLog;
 
 	private final int MENU_WIDTH = 640;
 	private final int MENU_HEIGHT = 480;
@@ -31,8 +32,9 @@ public class MenuScreen implements Screen {
 	 * <code> MyGame </code> to create menu screen.
 	 * @param game Game creator.
 	 */
-	public MenuScreen(MyGame game) {
+	public MenuScreen(MyGame game, int[] achLog) {
 		this.game = game;
+        this.achLog = achLog;
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, MENU_WIDTH, MENU_HEIGHT);
@@ -75,7 +77,7 @@ public class MenuScreen implements Screen {
 		} else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
 		    Gdx.app.exit();
 		} else if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
-            game.setScreen(new Achievement(game));
+            game.setScreen(new Achievement(game, achLog));
         }
 	}
 

@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 /**
- * <code> WinScreen </code> implements a static screen with a congratulation message, and 
+ * <code> WinScreen </code> implements a static screen with a congratulation message, and
  * allows player to then quit or replay game.
  * @see com.badlogic.gdx.Screen Screen.
  */
@@ -23,6 +23,7 @@ public class WinScreen implements Screen {
 	private int finalScore;
 	private int timeRemaining;
 	private int timesCaught;
+    private int[] achLog;
 
 	/**
 	 * Constructor for <code> WinScreen </code>, using the game creator in
@@ -32,11 +33,12 @@ public class WinScreen implements Screen {
 	 * @param timeRemaining Time remaining in seconds
 	 * @param timesCaught Number of times the player is caught by the dean
 	 */
-	public WinScreen(MyGame game, int finalScore, int timeRemaining, int timesCaught) {
+	public WinScreen(MyGame game, int finalScore, int timeRemaining, int timesCaught, int[] achLog) {
 		this.game = game;
 		this.finalScore = finalScore;
 		this.timeRemaining = timeRemaining;
 		this.timesCaught = timesCaught;
+        this.achLog = achLog;
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 640, 480);
@@ -47,7 +49,7 @@ public class WinScreen implements Screen {
 	}
 
 	/**
-	 * Process input then render new frame, including dialog, for the win menu. 
+	 * Process input then render new frame, including dialog, for the win menu.
 	 * @param delta Time in seconds since last frame finished rendering.
 	 * @see com.badlogic.gdx.Screen#render Screen.render().
 	 */
@@ -67,20 +69,20 @@ public class WinScreen implements Screen {
 		batch.end();
 
 		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-		    game.setScreen(new MenuScreen(game));
+		    game.setScreen(new MenuScreen(game, achLog));
 		}
 	}
 
    	/**
-	 * Dispose win menu assets when menu is exited or program is quit. 
+	 * Dispose win menu assets when menu is exited or program is quit.
 	 * @see com.badlogic.gdx.Screen#dispose Screen.dispose().
-	 */ 
+	 */
 	@Override
 	public void dispose() {
 		batch.dispose();
 		font.dispose();
 	}
-	
+
 	/** Unimplemented */
 	@Override
 	public void show() {}

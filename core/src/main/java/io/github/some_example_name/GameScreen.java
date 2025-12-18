@@ -59,6 +59,7 @@ public class GameScreen implements Screen {
 	private int timesCaughtByDean = 0;
 	private BitmapFont catchCounterFont;
     private NPC sign;
+    private int[] achLog = {0,0,0,0};
 
 	/**
 	 * Constructor for <code> GameScreen </code>, using the game creator
@@ -251,14 +252,9 @@ public class GameScreen implements Screen {
 			gameTimer.decrementTimer(delta);
 		}
 
-		if (gameTimer.getTimeLeft() == 0) {
-			gameTimer.onTimeUp();
-			game.setScreen(new MenuScreen(game));
-		}
-
-
 		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-			game.setScreen(new MenuScreen(game));
+            int[] achLog = {0,0,0,0};
+			game.setScreen(new MenuScreen(game, achLog));
 		}
 
 		if (gameTimer.getTimeLeft() == 0) {
@@ -275,7 +271,7 @@ public class GameScreen implements Screen {
 	 * <ul>
 	 * <li> WASD - Move Character Up/Left/Down/Right.</li>
 	 * <li> E - Interact with items.</li>
-	 * <li> Esc - Pause Game.</li>
+	 * <li> P - Pause Game.</li>
 	 * </ul>
 	 */
 	private void handleInput() {
@@ -337,7 +333,7 @@ public class GameScreen implements Screen {
 			int timeRemaining = (int) gameTimer.getTimeLeft();
 			int timesCaught = getTimesCaughtByDean();
 
-			game.setScreen(new WinScreen(game, finalScore, timeRemaining, timesCaught));
+			game.setScreen(new WinScreen(game, finalScore, timeRemaining, timesCaught, achLog));
 		}
 
 		if (!isCellBlocked(newX, newY)) {
