@@ -9,8 +9,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 /**
- * <code> WinScreen </code> implements a static screen with a congratulation message, and
- * allows player to then quit or replay game.
+ * <code> WinScreen </code> implements a static screen with a congratulation
+ * message, and allows player to then quit or replay game.
+ * 
  * @see com.badlogic.gdx.Screen Screen.
  */
 public class WinScreen implements Screen {
@@ -19,24 +20,28 @@ public class WinScreen implements Screen {
 	private SpriteBatch batch;
 	private BitmapFont font;
 
-	//scoring system variables
+	// scoring system variables
 	private int finalScore;
 	private int timeRemaining;
 	private int timesCaught;
+	private String username;
 
 	/**
 	 * Constructor for <code> WinScreen </code>, using the game creator in
 	 * <code> MyGame </code> to create menu screen.
-	 * @param game Game creator.
-	 * @param finalScore The calculated final score
+	 * 
+	 * @param game          Game creator.
+	 * @param finalScore    The calculated final score
 	 * @param timeRemaining Time remaining in seconds
-	 * @param timesCaught Number of times the player is caught by the dean
+	 * @param timesCaught   Number of times the player is caught by the dean
+	 * @param username      The player's username
 	 */
-	public WinScreen(MyGame game, int finalScore, int timeRemaining, int timesCaught) {
+	public WinScreen(MyGame game, int finalScore, int timeRemaining, int timesCaught, String username) {
 		this.game = game;
 		this.finalScore = finalScore;
 		this.timeRemaining = timeRemaining;
 		this.timesCaught = timesCaught;
+		this.username = username;
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 640, 480);
@@ -48,6 +53,7 @@ public class WinScreen implements Screen {
 
 	/**
 	 * Process input then render new frame, including dialog, for the win menu.
+	 * 
 	 * @param delta Time in seconds since last frame finished rendering.
 	 * @see com.badlogic.gdx.Screen#render Screen.render().
 	 */
@@ -67,13 +73,13 @@ public class WinScreen implements Screen {
 		batch.end();
 
 		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-		    game.setScreen(new MenuScreen(game));
+			game.addScore(username, finalScore);
+			game.setScreen(new MenuScreen(game));
 		}
 	}
 
-   	/**
+	/**
 	 * Dispose win menu assets when menu is exited or program is quit.
-	 * @see com.badlogic.gdx.Screen#dispose Screen.dispose().
 	 */
 	@Override
 	public void dispose() {
@@ -83,25 +89,30 @@ public class WinScreen implements Screen {
 
 	/** Unimplemented */
 	@Override
-	public void show() {}
+	public void show() {
+	}
 
 	/** Unimplemented */
 	@Override
-	public void resize(int width, int height) {}
-
-	/** Unimplemented */
-	@Override
-
-	/** Unimplemented */
-	public void pause() {}
+	public void resize(int width, int height) {
+	}
 
 	/** Unimplemented */
 	@Override
 
 	/** Unimplemented */
-	public void resume() {}
+	public void pause() {
+	}
 
 	/** Unimplemented */
 	@Override
-	public void hide() {}
+
+	/** Unimplemented */
+	public void resume() {
+	}
+
+	/** Unimplemented */
+	@Override
+	public void hide() {
+	}
 }

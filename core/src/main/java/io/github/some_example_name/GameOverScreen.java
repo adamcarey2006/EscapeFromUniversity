@@ -18,10 +18,9 @@ public class GameOverScreen implements Screen {
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private BitmapFont font;
-    private int[] achLog = {0,0,0,0};
 
     /**
-     * Constructor for <code> GameOverScreen </code> using the game creator in
+     * Constructor for <code> GameOverScreen </code> using the game creator in 
      * <MyGame </code> to create the game over screen
      * @param game Game creator
      */
@@ -40,7 +39,7 @@ public class GameOverScreen implements Screen {
     /**
      * Procces input then render thew new frame for the game over screen
      * @param delta Time in seconds since the last frame finished rendering
-     * @see com.badlogic.gdx.Screen#render Screen.render()
+     * @see com.badlogic,gdx.Screen#render Screen.render()
      */
 
     @Override
@@ -57,7 +56,7 @@ public class GameOverScreen implements Screen {
         batch.end();
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            game.setScreen(new MenuScreen(game, achLog));
+            game.setScreen(new MenuScreen(game));
         }
     }
 
