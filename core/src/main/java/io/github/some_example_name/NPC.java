@@ -52,13 +52,10 @@ public class NPC {
 	}
 
 	/**
-	 * Convenience method to be called by the game screen's <code> render() 
-	 * </code> method, to draw the NPC's sprite and it's dialog using a
-	 * SpriteBatch at the current player coordinates.
+	 * Draws the NPC's sprite and its dialog using a SpriteBatch at the current
+	 * player coordinates.
 	 * 
 	 * @param batch SpriteBatch used by application to render all sprites.
-	 * @see com.badlogic.gdx.graphics.g2d.SpriteBatch SpriteBatch
-	 * @see com.badlogic.gdx.Screen#render Screen.render().
 	 */
 	public void render(SpriteBatch batch) {
 		batch.draw(texture, position.x, position.y);
@@ -71,10 +68,7 @@ public class NPC {
 	}
 
 	/**
-	 * Convenience method to be called by application to dispose of textures
-	 * of NPC's sprites and dialog when the application's dispose method is called.
-	 * 
-	 * @see com.badlogic.gdx.Screen#dispose Screen.dispose().
+	 * Dispose of textures of NPC's sprites and dialog.
 	 */
 	public void dispose() {
 		texture.dispose();

@@ -9,10 +9,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-/**
- * 
- */
-
 public class TutorialScreen implements Screen {
     private final MyGame game;
     private OrthographicCamera camera;
@@ -31,7 +27,6 @@ public class TutorialScreen implements Screen {
         camera.setToOrtho(false, MENU_WIDTH, MENU_HEIGHT);
         batch = new SpriteBatch();
 
-        // load the tutorial screen image
         tutorialImage = new Texture("How to Play Screen.png");
 
         viewport = new FitViewport(MENU_WIDTH, MENU_HEIGHT, camera);
@@ -46,15 +41,13 @@ public class TutorialScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
-        // draw the image to fill the screen
         batch.draw(tutorialImage, 0, 0, MENU_WIDTH, MENU_HEIGHT);
         batch.end();
 
-        // once space bar is pressed load the maze game
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             game.setScreen(new GameScreen(game, username));
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            Gdx.app.exit(); // user can go back to the start menu if they choose
+            Gdx.app.exit();
         }
     }
 
@@ -69,13 +62,12 @@ public class TutorialScreen implements Screen {
         tutorialImage.dispose();
     }
 
-    @Override
     public void show() {
-    } // show main menu screen
+    }
 
     @Override
     public void pause() {
-    } // not yet implemented
+    }
 
     @Override
     public void resume() {

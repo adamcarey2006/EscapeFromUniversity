@@ -80,8 +80,6 @@ public class WinScreen implements Screen {
 
 	/**
 	 * Dispose win menu assets when menu is exited or program is quit.
-	 * 
-	 * @see com.badlogic.gdx.Screen#dispose Screen.dispose().
 	 */
 	@Override
 	public void dispose() {

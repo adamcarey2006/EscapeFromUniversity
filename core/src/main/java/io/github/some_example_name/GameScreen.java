@@ -207,35 +207,7 @@ public class GameScreen implements Screen {
 		// switch to screen coordinates for the UI elements
 		batch.setProjectionMatrix(uiStage.getCamera().combined);
 
-		// draw the three events encountered checklists in the top left hand corner of
-		// the screen
-		// events get updates using a ternary operator which is like a condensed if/else
-		// statement -> it is set out like: (condition ? vali_if_true : value_if_false)
-		font.draw(batch, "Positive Event Encountered = " + (locker.isBoostActive() ? "1" : "0") + "/1", 35, 630);// this
-																													// means
-																													// if
-																													// the
-																													// locker
-																													// boost
-																													// is
-																													// active
-																													// (the
-																													// bus
-																													// ticket
-																													// has
-																													// been
-																													// picked
-																													// up)
-																													// display
-																													// that
-																													// the
-																													// event
-																													// 1/1
-																													// has
-																													// been
-																													// enocuntered
-																													// otherwide
-																													// 0/1
+		font.draw(batch, "Positive Event Encountered = " + (locker.isBoostActive() ? "1" : "0") + "/1", 35, 630);
 		font.draw(batch, "Negative Event Encountered = " + (timesCaughtByDean > 0 ? "1" : "0") + "/1", 35, 610);
 		font.draw(batch, "Hidden Event Encountered = " + (busTicket.isCollected() ? "1" : "0") + "/1", 35, 590);
 
@@ -316,23 +288,23 @@ public class GameScreen implements Screen {
 		float newY = player.getPosition().y;
 
 		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-			float tmpSpeed = moveSpeed;
+			float originalSpeed = moveSpeed;
 			if (Gdx.input.isKeyPressed(Input.Keys.A) | Gdx.input.isKeyPressed(Input.Keys.D)) {
 				moveSpeed = moveSpeed * 0.70710678118f;
 			}
 			newY += moveSpeed;
 			player.setDirection(Player.Direction.UP);
-			moveSpeed = tmpSpeed;
+			moveSpeed = originalSpeed;
 		}
 
 		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-			float tmpSpeed = moveSpeed;
+			float originalSpeed = moveSpeed;
 			if (Gdx.input.isKeyPressed(Input.Keys.A) | Gdx.input.isKeyPressed(Input.Keys.D)) {
 				moveSpeed = moveSpeed * 0.70710678118f;
 			}
 			newY -= moveSpeed;
 			player.setDirection(Player.Direction.DOWN);
-			moveSpeed = tmpSpeed;
+			moveSpeed = originalSpeed;
 		}
 
 		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
