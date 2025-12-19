@@ -15,14 +15,16 @@ public class TutorialScreen implements Screen {
     private SpriteBatch batch;
     private Texture tutorialImage;
     private FitViewport viewport;
+    private int[] achLog;
 
     private final int MENU_WIDTH = 790;
     private final int MENU_HEIGHT = 480;
     private String username;
 
-    public TutorialScreen(MyGame game, String username) {
+    public TutorialScreen(MyGame game, String username,int[] achLog) {
         this.game = game;
         this.username = username;
+        this.achLog = achLog;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, MENU_WIDTH, MENU_HEIGHT);
         batch = new SpriteBatch();
@@ -45,7 +47,7 @@ public class TutorialScreen implements Screen {
         batch.end();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            game.setScreen(new GameScreen(game, username));
+            game.setScreen(new GameScreen(game, username, achLog));
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             Gdx.app.exit();
         }

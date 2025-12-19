@@ -26,13 +26,14 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
  * to process user input, and redraw the frames and update the game asset states
  * as
  * the game progresses.
- * 
+ *
  * @see com.badlogic.gdx.Screen Screen.
  */
 
 public class GameScreen implements Screen {
 	private final MyGame game;
 	private boolean isPaused = false;
+    private int[] achLog;
 
 	TiledMap tiledMap;
 	OrthogonalTiledMapRenderer mapRenderer;
@@ -67,11 +68,12 @@ public class GameScreen implements Screen {
 	/**
 	 * Constructor for <code> GameScreen </code>, using the game creator
 	 * in <code> MyGame </code> to create all main game and UI assets.
-	 * 
+	 *
 	 * @param game Game creator.
 	 */
-	public GameScreen(MyGame game, String username) {
+	public GameScreen(MyGame game, String username, int[] achLog) {
 		this.game = game;
+        this.achLog = achLog;
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, MAP_WIDTH, MAP_HEIGHT);
@@ -120,7 +122,7 @@ public class GameScreen implements Screen {
 	/**
 	 * Update game state from last frame, and render a new frame for the Screen
 	 * using updated assets.
-	 * 
+	 *
 	 * @param delta Time in seconds since last frame finished rendering.
 	 * @see com.badlogic.gdx.Screen#render Screen.render().
 	 */
@@ -252,18 +254,13 @@ public class GameScreen implements Screen {
 			gameTimer.decrementTimer(delta);
 		}
 
-		if (gameTimer.getTimeLeft() == 0) {
-			gameTimer.onTimeUp();
-			game.setScreen(new MenuScreen(game));
-		}
-
 		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-			game.setScreen(new MenuScreen(game));
+			game.setScreen(new MenuScreen(game, achLog));
 		}
 
 		if (gameTimer.getTimeLeft() == 0) {
 			gameTimer.onTimeUp();
-			game.setScreen(new GameOverScreen(game));
+			game.setScreen(new GameOverScreen(game, achLog));
 		}
 		uiStage.act(delta);
 		uiStage.draw();
@@ -337,7 +334,7 @@ public class GameScreen implements Screen {
 			int timeRemaining = (int) gameTimer.getTimeLeft();
 			int timesCaught = getTimesCaughtByDean();
 			// send the player to the win screen
-			game.setScreen(new WinScreen(game, finalScore, timeRemaining, timesCaught, player.getUsername()));
+			game.setScreen(new WinScreen(game, finalScore, timeRemaining, timesCaught, player.getUsername(), achLog));
 		}
 
 		if (!isCellBlocked(newX, newY)) {
@@ -349,7 +346,7 @@ public class GameScreen implements Screen {
 	 * Returns if the cell at a given coordinate in the world allows an entity
 	 * to move onto it.Useful for checking collisions when moving player or another
 	 * entity.
-	 * 
+	 *
 	 * @param x Horizontal position of cell in the world.
 	 * @param y Vertical position of cell in the world.
 	 * @return True if cell blocks entities to move onto it, False if entities can
@@ -401,7 +398,7 @@ public class GameScreen implements Screen {
 
 	/**
 	 * Resize UI and game map viewports when the window size is changed.
-	 * 
+	 *
 	 * @param width  Current width of window.
 	 * @param height Current height of window.
 	 * @see com.badlogic.gdx.Screen#resize Screen.resize().
@@ -422,9 +419,9 @@ public class GameScreen implements Screen {
 	}
 
 	/**
-	 * Dipose of all assets and UI elements when game screen is left i.e
+	 * Dipose of all assets and UI elements when game screen is left i.e.
 	 * when the player wins the game or quits.
-	 * 
+	 *
 	 * @see com.badlogic.gdx.Screen#dispose Screen.dispose().
 	 */
 	@Override

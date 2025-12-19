@@ -23,7 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
  * <code> MenuScreen </code> implements a main menu screen, to let player pause,
  * resume
  * and quit game.
- * 
+ *
  * @see com.badlogic.gdx.Screen Screen.
  */
 
@@ -33,6 +33,7 @@ public class MenuScreen implements Screen {
 	private SpriteBatch batch;
 	private BitmapFont font;
 	private FitViewport viewport;
+    private int[] achLog;
 
 	private Stage stage;
 	private Skin skin;
@@ -44,11 +45,12 @@ public class MenuScreen implements Screen {
 	/**
 	 * Constructor for <code> MenuScreen </code>, using the game creator in
 	 * <code> MyGame </code> to create menu screen.
-	 * 
+	 *
 	 * @param game Game creator.
 	 */
-	public MenuScreen(MyGame game) {
+	public MenuScreen(MyGame game,int[] achLog) {
 		this.game = game;
+        this.achLog = achLog;
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, MENU_WIDTH, MENU_HEIGHT);
@@ -98,7 +100,7 @@ public class MenuScreen implements Screen {
 
 	/**
 	 * Process input then render new frame for the main menu.
-	 * 
+	 *
 	 * @param delta Time in seconds since last frame finished rendering.
 	 * @see com.badlogic.gdx.Screen#render Screen.render().
 	 */
@@ -137,17 +139,17 @@ public class MenuScreen implements Screen {
 			if (username.isEmpty()) {
 				username = "Mark"; // Default username
 			}
-			game.setScreen(new TutorialScreen(game, username));// go to tutorial screen
+			game.setScreen(new TutorialScreen(game, username, achLog));// go to tutorial screen
 		} else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
 			Gdx.app.exit();
 		} else if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
-			game.setScreen(new Achievement(game));
+			game.setScreen(new Achievement(game, achLog));
 		}
 	}
 
 	/**
 	 * Resize UI Viewport when the window size is changed.
-	 * 
+	 *
 	 * @param width  Current width of window.
 	 * @param height Current height of window.
 	 * @see com.badlogic.gdx.Screen#resize Screen.resize().
@@ -159,7 +161,7 @@ public class MenuScreen implements Screen {
 
 	/**
 	 * Dispose menu assets when menu is exited or program is quit.
-	 * 
+	 *
 	 * @see com.badlogic.gdx.Screen#dispose Screen.dispose().
 	 */
 	@Override

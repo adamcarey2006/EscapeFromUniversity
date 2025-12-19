@@ -3,10 +3,10 @@ package io.github.some_example_name;
 import com.badlogic.gdx.Game;
 
 /**
- * <code> MyGame </code> handles creating and presenting the game from 
- * the different screens. 
- * @see com.badlogic.gdx.Game Game 
- * @see com.badlogic.gdx.Screen Screen 
+ * <code> MyGame </code> handles creating and presenting the game from
+ * the different screens.
+ * @see com.badlogic.gdx.Game Game
+ * @see com.badlogic.gdx.Screen Screen
  */
 //leaderboard system imports
 import java.util.ArrayList;
@@ -25,7 +25,8 @@ public class MyGame extends Game {
 	@Override
 	public void create() {
 		leaderboard = new ArrayList<>();
-		setScreen(new MenuScreen(this));
+        int[] achLog = {0,0,0,0};
+		setScreen(new MenuScreen(this, achLog));
 	}
 
 	/**
