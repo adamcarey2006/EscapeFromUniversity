@@ -216,6 +216,13 @@ public class GameScreen implements Screen {
 		// switch back to the game coordinates for game objects
 		batch.setProjectionMatrix(camera.combined);
 
+        if (locker.isBoostActive()) {
+            achLog[2] = 1;
+        }
+        if (NPC.isTalked()) {
+            achLog[3] = 1;
+        }
+
 		if (busTicket != null) {
 			busTicket.render(batch);
 		}
@@ -333,6 +340,7 @@ public class GameScreen implements Screen {
 			int finalScore = calculateFinalScore();
 			int timeRemaining = (int) gameTimer.getTimeLeft();
 			int timesCaught = getTimesCaughtByDean();
+            if (timesCaught == 0) {achLog[0] = 1;}
 			// send the player to the win screen
 			game.setScreen(new WinScreen(game, finalScore, timeRemaining, timesCaught, player.getUsername(), achLog));
 		}

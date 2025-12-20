@@ -51,6 +51,8 @@ public class WinScreen implements Screen {
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		font.getData().setScale(2.5f);
+
+        if (finalScore >= 400) {achLog[1] = 1;}
 	}
 
 	/**

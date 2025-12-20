@@ -19,10 +19,11 @@ public class NPC {
 	private BitmapFont font;
 	private boolean showMessage = false;
 	private String speech;
+    private static boolean talked = false;
 
 	/**
 	 * Constructor for <code> NPC </code>, with a set of coordinates.
-	 * 
+	 *
 	 * @param x Horizontal position for NPC to spawn in.
 	 * @param y Vertical position for NPC to spawn in.
 	 */
@@ -37,13 +38,14 @@ public class NPC {
 	/**
 	 * Update if the dialog is shown to player depending on player position
 	 * and if the E key has been pressed recently.
-	 * 
+	 *
 	 * @param player Player object.
 	 */
 	public void update(Player player) {
 		if (player.getPosition().dst(position) < 50f &&
 				Gdx.input.isKeyJustPressed(Input.Keys.E)) {
 			showMessage = true;
+            talked = true;
 		}
 
 		if (showMessage && player.getPosition().dst(position) > 60f) {
@@ -54,7 +56,7 @@ public class NPC {
 	/**
 	 * Draws the NPC's sprite and its dialog using a SpriteBatch at the current
 	 * player coordinates.
-	 * 
+	 *
 	 * @param batch SpriteBatch used by application to render all sprites.
 	 */
 	public void render(SpriteBatch batch) {
@@ -77,7 +79,7 @@ public class NPC {
 
 	/**
 	 * Get the NPC's position in world.
-	 * 
+	 *
 	 * @return The players x-by-y coordinates as a 2D vector.
 	 */
 	public Vector2 getPosition() {
@@ -86,10 +88,14 @@ public class NPC {
 
 	/**
 	 * Get NPC's collision box.
-	 * 
+	 *
 	 * @return Rectangle bounds of NPC.
 	 */
 	public Rectangle getBounds() {
 		return bounds;
 	}
+
+    public static boolean isTalked() {
+        return (talked);
+    }
 }

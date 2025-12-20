@@ -61,9 +61,30 @@ public class Achievement implements Screen {
 
         batch.begin();
         font.draw(batch, "Achievements", 175, 350);
-        font.draw(batch, "Test 1", 160, 275);
-        font.draw(batch, "Test 2", 160, 225);
-        font.draw(batch, "Test 3", 160, 175);
+        font.draw(batch, "Avoided the dean.", 160, 275);
+        if (achLog[0] == 1) {
+            font.draw(batch, "Yes", 450, 275);
+        } else if (achLog[0] == 0) {
+            font.draw(batch, "No", 450, 275);
+        }
+        font.draw(batch, "Speedrunner", 160, 225);
+        if (achLog[1] == 1) {
+            font.draw(batch, "Yes", 450, 225);
+        } else if (achLog[1] == 0) {
+            font.draw(batch, "No", 450, 225);
+        }
+        font.draw(batch, "Sugar High", 160, 175);
+        if (achLog[2] == 1) {
+            font.draw(batch, "Yes", 450, 175);
+        } else if (achLog[2] == 0) {
+            font.draw(batch, "No", 450, 175);
+        }
+        font.draw(batch, "Friendly gamer", 160, 125);
+        if (achLog[3] == 1) {
+            font.draw(batch, "Yes", 450, 125);
+        } else if (achLog[3] == 0) {
+            font.draw(batch, "No", 450, 125);
+        }
         batch.end();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
