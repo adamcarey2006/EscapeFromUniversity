@@ -19,8 +19,8 @@ public class NPC {
 	private BitmapFont font;
 	private boolean showMessage = false;
 	private String speech;
-    private static boolean talked = false;
-    private static int numTalked = 0;
+    private boolean talked = false;
+    private int numTalked = 0;
 
 	/**
 	 * Constructor for <code> NPC </code>, with a set of coordinates.
@@ -102,7 +102,7 @@ public class NPC {
      *
      * @return boolean status.
      */
-    public static boolean isTalked() {
+    public boolean isTalked() {
         return (talked);
     }
 
@@ -111,7 +111,7 @@ public class NPC {
      *
      * @return boolean if number over 3.
      */
-    public static boolean manyTalks() {
+    public boolean manyTalks() {
         return (numTalked > 3);
     }
 

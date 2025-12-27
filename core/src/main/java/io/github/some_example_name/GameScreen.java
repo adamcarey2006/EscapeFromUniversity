@@ -61,10 +61,12 @@ public class GameScreen implements Screen {
 
 	private Dean dean;
 	private NPC friend;
+    private NPC survey;
 	private int timesCaughtByDean = 0;
 	private BitmapFont catchCounterFont;
 	private NPC sign;
     private boolean updNPC = false;
+    private boolean minNPC = false;
 
 	/**
 	 * Constructor for <code> GameScreen </code>, using the game creator
@@ -92,7 +94,9 @@ public class GameScreen implements Screen {
 		dean = new Dean(90, 450, player, this);
 		friend = new NPC(560, 300, "NPC.png", "Hey " + player.getUsername()
 				+ "!\nDon't forget your bus ticket...\nIt must've flown out your window again.");
-		sign = new NPC(175, 200, "signpost.png", "North - Bus stop\nEast - Campus");
+		sign = new NPC(175, 200, "signpost.png", "North - Bus stop (exit)\nEast - Campus");
+        survey = new NPC(560, 370, "NPC.png", "Hey!\nCan I get a moment of your" +
+            "\ntime to take a quick survey.");
 
 		catchCounterFont = new BitmapFont();
 		catchCounterFont.getData().setScale(1.5f);
@@ -160,16 +164,23 @@ public class GameScreen implements Screen {
 
 			return; // Skip the rest of the game logic
 		}
-        //Updates NPC speech
-        if (NPC.manyTalks() && !updNPC) {
+        //Updates NPC friend speech
+        if (friend.manyTalks() && !updNPC) {
             String newSpeech = ("Hey " + player.getUsername()
                 + "!\nI don't know anything else...\nStop asking me.");
             friend.setSpeech(newSpeech);
             updNPC = true;
         }
 
+        //Decreases time if talked to survey NPC
+        if (survey.isTalked() && !minNPC) {
+            gameTimer.decrementTimer(15f);
+            minNPC = true;
+        }
+
 		friend.update(player);
 		sign.update(player);
+        survey.update(player);
 		dean.update(delta);
 
 		if (player.getPosition().dst(dean.getPosition()) < 16f) {
@@ -227,7 +238,7 @@ public class GameScreen implements Screen {
         if (locker.isBoostActive()) {
             achLog[2] = 1;
         }
-        if (NPC.isTalked()) {
+        if (friend.isTalked() && survey.isTalked()) {
             achLog[3] = 1;
         }
 
@@ -256,6 +267,7 @@ public class GameScreen implements Screen {
 		dean.render(batch);
 		friend.render(batch);
 		sign.render(batch);
+        survey.render(batch);
 		player.render(batch);
 
 		if (busTicket != null && busTicket.isCollected()) {
@@ -452,6 +464,7 @@ public class GameScreen implements Screen {
 		dean.dispose();
 		catchCounterFont.dispose();
 		friend.dispose();
+        survey.dispose();
 		sign.dispose();
 		if (busTicket != null) {
 			busTicket.dispose();
