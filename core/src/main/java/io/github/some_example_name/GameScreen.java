@@ -64,6 +64,7 @@ public class GameScreen implements Screen {
 	private int timesCaughtByDean = 0;
 	private BitmapFont catchCounterFont;
 	private NPC sign;
+    private boolean updNPC = false;
 
 	/**
 	 * Constructor for <code> GameScreen </code>, using the game creator
@@ -159,6 +160,13 @@ public class GameScreen implements Screen {
 
 			return; // Skip the rest of the game logic
 		}
+        //Updates NPC speech
+        if (NPC.manyTalks() && !updNPC) {
+            String newSpeech = ("Hey " + player.getUsername()
+                + "!\nI don't know anything else...\nStop asking me.");
+            friend.setSpeech(newSpeech);
+            updNPC = true;
+        }
 
 		friend.update(player);
 		sign.update(player);

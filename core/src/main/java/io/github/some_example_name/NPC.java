@@ -20,6 +20,7 @@ public class NPC {
 	private boolean showMessage = false;
 	private String speech;
     private static boolean talked = false;
+    private static int numTalked = 0;
 
 	/**
 	 * Constructor for <code> NPC </code>, with a set of coordinates.
@@ -46,6 +47,7 @@ public class NPC {
 				Gdx.input.isKeyJustPressed(Input.Keys.E)) {
 			showMessage = true;
             talked = true;
+            numTalked += 1;
 		}
 
 		if (showMessage && player.getPosition().dst(position) > 60f) {
@@ -95,7 +97,30 @@ public class NPC {
 		return bounds;
 	}
 
+    /**
+     * Get NPC's talked status.
+     *
+     * @return boolean status.
+     */
     public static boolean isTalked() {
         return (talked);
+    }
+
+    /**
+     * Get NPC's times talked.
+     *
+     * @return boolean if number over 3.
+     */
+    public static boolean manyTalks() {
+        return (numTalked > 3);
+    }
+
+    /**
+     * Get new speech input.
+     *
+     * @param nSpeech String used by application to change speech.
+     */
+    public void setSpeech(String nSpeech) {
+        speech = nSpeech;
     }
 }
