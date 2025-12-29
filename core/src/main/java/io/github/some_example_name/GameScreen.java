@@ -33,7 +33,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 public class GameScreen implements Screen {
 	private final MyGame game;
 	private boolean isPaused = false;
-    private int[] achLog;
+	private int[] achLog;
 
 	TiledMap tiledMap;
 	OrthogonalTiledMapRenderer mapRenderer;
@@ -58,15 +58,15 @@ public class GameScreen implements Screen {
 
 	private final int MAP_WIDTH = 640;
 	private final int MAP_HEIGHT = 640;
+	private final float SQRT_2_INV = 0.70710678118f;
 
 	private Dean dean;
 	private NPC friend;
-    private NPC survey;
+	private NPC survey;
 	private int timesCaughtByDean = 0;
-	private BitmapFont catchCounterFont;
 	private NPC sign;
-    private boolean updNPC = false;
-    private boolean minNPC = false;
+	private boolean friendSpeechUpdated = false;
+	private boolean surveyTimePenaltyAdded = false;
 
 	/**
 	 * Constructor for <code> GameScreen </code>, using the game creator
@@ -76,7 +76,7 @@ public class GameScreen implements Screen {
 	 */
 	public GameScreen(MyGame game, String username, int[] achLog) {
 		this.game = game;
-        this.achLog = achLog;
+		this.achLog = achLog;
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, MAP_WIDTH, MAP_HEIGHT);
@@ -95,11 +95,10 @@ public class GameScreen implements Screen {
 		friend = new NPC(560, 300, "NPC.png", "Hey " + player.getUsername()
 				+ "!\nDon't forget your bus ticket...\nIt must've flown out your window again.");
 		sign = new NPC(175, 200, "signpost.png", "North - Bus stop (exit)\nEast - Campus");
-        survey = new NPC(560, 370, "NPC.png", "Hey!\nCan I get a moment of your" +
-            "\ntime to take a quick survey.");
 
-		catchCounterFont = new BitmapFont();
-		catchCounterFont.getData().setScale(1.5f);
+		survey = new NPC(560, 370, "NPC.png", "Hey!\nCan I get a moment of your" +
+				"\ntime to take a quick survey.");
+
 		font = new BitmapFont();
 
 		MapObjects eventObjects = tiledMap.getLayers().get("Events").getObjects();
@@ -164,23 +163,23 @@ public class GameScreen implements Screen {
 
 			return; // Skip the rest of the game logic
 		}
-        //Updates NPC friend speech
-        if (friend.manyTalks() && !updNPC) {
-            String newSpeech = ("Hey " + player.getUsername()
-                + "!\nI don't know anything else...\nStop asking me.");
-            friend.setSpeech(newSpeech);
-            updNPC = true;
-        }
+		// Updates NPC speech
+		if (friend.manyTalks() && !friendSpeechUpdated) {
+			String newSpeech = ("Hey " + player.getUsername()
+					+ "!\nI don't know anything else...\nStop asking me.");
+			friend.setSpeech(newSpeech);
+			friendSpeechUpdated = true;
+		}
 
-        //Decreases time if talked to survey NPC
-        if (survey.isTalked() && !minNPC) {
-            gameTimer.decrementTimer(15f);
-            minNPC = true;
-        }
+		// Decreases time if talked to survey NPC
+		if (survey.isTalked() && !surveyTimePenaltyAdded) {
+			gameTimer.decrementTimer(15f);
+			surveyTimePenaltyAdded = true;
+		}
 
 		friend.update(player);
 		sign.update(player);
-        survey.update(player);
+		survey.update(player);
 		dean.update(delta);
 
 		if (player.getPosition().dst(dean.getPosition()) < 16f) {
@@ -235,12 +234,12 @@ public class GameScreen implements Screen {
 		// switch back to the game coordinates for game objects
 		batch.setProjectionMatrix(camera.combined);
 
-        if (locker.isBoostActive()) {
-            achLog[2] = 1;
-        }
-        if (friend.isTalked() && survey.isTalked()) {
-            achLog[3] = 1;
-        }
+		if (locker.isBoostActive()) {
+			achLog[2] = 1;
+		}
+		if (friend.isTalked() && survey.isTalked()) {
+			achLog[3] = 1;
+		}
 
 		if (busTicket != null) {
 			busTicket.render(batch);
@@ -267,7 +266,7 @@ public class GameScreen implements Screen {
 		dean.render(batch);
 		friend.render(batch);
 		sign.render(batch);
-        survey.render(batch);
+		survey.render(batch);
 		player.render(batch);
 
 		if (busTicket != null && busTicket.isCollected()) {
@@ -314,7 +313,7 @@ public class GameScreen implements Screen {
 		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 			float originalSpeed = moveSpeed;
 			if (Gdx.input.isKeyPressed(Input.Keys.A) | Gdx.input.isKeyPressed(Input.Keys.D)) {
-				moveSpeed = moveSpeed * 0.70710678118f;
+				moveSpeed = moveSpeed * SQRT_2_INV;
 			}
 			newY += moveSpeed;
 			player.setDirection(Player.Direction.UP);
@@ -324,7 +323,7 @@ public class GameScreen implements Screen {
 		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
 			float originalSpeed = moveSpeed;
 			if (Gdx.input.isKeyPressed(Input.Keys.A) | Gdx.input.isKeyPressed(Input.Keys.D)) {
-				moveSpeed = moveSpeed * 0.70710678118f;
+				moveSpeed = moveSpeed * SQRT_2_INV;
 			}
 			newY -= moveSpeed;
 			player.setDirection(Player.Direction.DOWN);
@@ -360,7 +359,9 @@ public class GameScreen implements Screen {
 			int finalScore = calculateFinalScore();
 			int timeRemaining = (int) gameTimer.getTimeLeft();
 			int timesCaught = getTimesCaughtByDean();
-            if (timesCaught == 0) {achLog[0] = 1;}
+			if (timesCaught == 0) {
+				achLog[0] = 1;
+			}
 			// send the player to the win screen
 			game.setScreen(new WinScreen(game, finalScore, timeRemaining, timesCaught, player.getUsername(), achLog));
 		}
@@ -462,9 +463,8 @@ public class GameScreen implements Screen {
 		font.dispose();
 		uiStage.dispose();
 		dean.dispose();
-		catchCounterFont.dispose();
 		friend.dispose();
-        survey.dispose();
+		survey.dispose();
 		sign.dispose();
 		if (busTicket != null) {
 			busTicket.dispose();

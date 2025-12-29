@@ -20,6 +20,7 @@ public class BusTicket {
 	 * Constructor for <code> BusTicket </code>, spawning the ticket sprite
 	 * in the given world coordinates.Uses "bus-ticket.png" in
 	 * <code> assets/ </code> folder for sprite.
+	 * 
 	 * @param x Horizontal position in world for ticket sprite.
 	 * @param y Vertical position in world for ticket sprite.
 	 */
@@ -32,43 +33,46 @@ public class BusTicket {
 
 	/**
 	 * Render ticket sprite within given sprite batch.
+	 * 
 	 * @param batch SpriteBatch to render world sprite in.
 	 * @see com.badlogic.gdx.graphics.g2d.SpriteBatch SpriteBatch.
 	 */
 	public void render(SpriteBatch batch) {
 		if (isDiscovered && !isCollected) {
-		    batch.draw(texture, position.x, position.y, 16, 16);
+			batch.draw(texture, position.x, position.y, 16, 16);
 		}
 	}
 
 	/**
 	 * Render ticket collected UI element, to signify the ticket is in user
 	 * inventory.
-	 * @param batch SpriteBatch to render UI sprite in.
+	 * 
+	 * @param batch  SpriteBatch to render UI sprite in.
 	 * @param camera Camera connected to batch.
 	 * @see com.badlogic.gdx.graphics.g2d.SpriteBatch SpriteBatch.
 	 * @see com.badlogic.gdx.graphics.OrthographicCamera OrthographicCamera
 	 */
 	public void renderAsIcon(SpriteBatch batch, OrthographicCamera camera) {
 		if (isCollected) {
-		    float iconSize = 32f;
-		    float padding = 20f;
+			float iconSize = 32f;
+			float padding = 20f;
 
-		    // Calculate the top-right corner of the camera's view
-		    // We must account for the camera's zoom level
-		    float cornerX = camera.position.x + (camera.viewportWidth / 2 * camera.zoom);
-		    float cornerY = camera.position.y + (camera.viewportHeight / 2 * camera.zoom);
+			// Calculate the top-right corner of the camera's view
+			// We must account for the camera's zoom level
+			float cornerX = camera.position.x + (camera.viewportWidth / 2 * camera.zoom);
+			float cornerY = camera.position.y + (camera.viewportHeight / 2 * camera.zoom);
 
-		    // Set the icon's position with padding
-		    float iconX = cornerX - iconSize - padding;
-		    float iconY = cornerY - iconSize - padding;
+			// Set the icon's position with padding
+			float iconX = cornerX - iconSize - padding;
+			float iconY = cornerY - iconSize - padding;
 
-		    batch.draw(texture, iconX, iconY, iconSize, iconSize);
+			batch.draw(texture, iconX, iconY, iconSize, iconSize);
 		}
 	}
 
 	/**
 	 * Return ticket position as a 2D Vector.
+	 * 
 	 * @return 2D Vector with x/y positions of ticket.
 	 */
 	public Vector2 getPosition() {
@@ -77,6 +81,7 @@ public class BusTicket {
 
 	/**
 	 * Return if the ticket has been collected by player or not.
+	 * 
 	 * @return True/False value corrosponding to if ticket is collected.
 	 */
 	public boolean isCollected() {
