@@ -15,8 +15,6 @@ import com.badlogic.gdx.audio.Sound;
  * a sound when it reaches 0.
  * It contains a sprite that can be rendered to display to the user graphically
  * how much time is left.
- *
- * @since 2025-11-04 19:28:26
  */
 public class GameTimer {
 
@@ -74,6 +72,16 @@ public class GameTimer {
 		this.timeLeft = Math.max(0, timeLeft - decrementation);
 		this.timerLabel.setText(this.toString());
 	}
+
+    /**
+     * Increments timer by given value, or to 300 if the new value will be
+     * over this value.
+     * @param incrementation Value to increase the timer by, in seconds, ideally sourced from {@link com.badlogic.gdx.Graphics#getRawDeltaTime()}.
+     */
+    public void incrementTimer(float incrementation) {
+        this.timeLeft = Math.min(300, timeLeft + incrementation);
+        this.timerLabel.setText(this.toString());
+    }
 
 	/**
 	 * Called when the time reaches 0, to play finishing sound and

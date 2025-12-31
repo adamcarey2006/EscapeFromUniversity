@@ -65,10 +65,12 @@ public class GameScreen implements Screen {
 	private NPC survey;
 	private int timesCaughtByDean = 0;
 	private NPC sign;
+    private Clock clockInst;
 	private boolean friendSpeechUpdated = false;
 	private boolean surveyTimePenaltyAdded = false;
+    private boolean clockTimeBonusAdded = false;
 
-	/**
+    /**
 	 * Constructor for <code> GameScreen </code>, using the game creator
 	 * in <code> MyGame </code> to create all main game and UI assets.
 	 *
@@ -98,6 +100,7 @@ public class GameScreen implements Screen {
 
 		survey = new NPC(560, 370, "NPC.png", "Hey!\nCan I get a moment of your" +
 				"\ntime to take a quick survey.");
+        clockInst = new Clock(50, 40);
 
 		font = new BitmapFont();
 
@@ -177,9 +180,17 @@ public class GameScreen implements Screen {
 			surveyTimePenaltyAdded = true;
 		}
 
+        // Decreases time if talked to survey NPC
+        if (clockInst.isCollected() && !clockTimeBonusAdded) {
+            gameTimer.incrementTimer(30f);
+            clockTimeBonusAdded = true;
+            clockInst.render(batch);
+        }
+
 		friend.update(player);
 		sign.update(player);
 		survey.update(player);
+        clockInst.update(player);
 		dean.update(delta);
 
 		if (player.getPosition().dst(dean.getPosition()) < 16f) {
@@ -267,6 +278,7 @@ public class GameScreen implements Screen {
 		friend.render(batch);
 		sign.render(batch);
 		survey.render(batch);
+        clockInst.render(batch);
 		player.render(batch);
 
 		if (busTicket != null && busTicket.isCollected()) {
@@ -470,6 +482,10 @@ public class GameScreen implements Screen {
 			busTicket.dispose();
 		}
 	}
+
+    public void addTime() {
+        gameTimer.incrementTimer(30f);
+    }
 
 	/** Unimplemented */
 	@Override

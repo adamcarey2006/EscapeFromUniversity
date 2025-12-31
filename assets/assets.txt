@@ -1,4 +1,5 @@
 Cliff_Tile.png
+Clock.png
 Dean-back.png
 Dean-front.png
 Dean-side.png
