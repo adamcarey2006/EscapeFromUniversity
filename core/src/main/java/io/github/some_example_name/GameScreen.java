@@ -64,13 +64,24 @@ public class GameScreen implements Screen {
 	private NPC friend;
 	private NPC survey;
 	private int timesCaughtByDean = 0;
+	private static int negativeEvents = 0;
+	private static int positiveEvents = 0;
 	private NPC sign;
-    private Clock clockInst;
+	private Clock clockInst;
 	private boolean friendSpeechUpdated = false;
 	private boolean surveyTimePenaltyAdded = false;
-    private boolean clockTimeBonusAdded = false;
+	private boolean clockTimeBonusAdded = false;
 
-    /**
+	/**
+	 * Constructor for <code> GameScreen </code>, using the game creator
+	 * in <code> MyGame </code> to create all main game and UI assets.
+	 *
+	 * @param game Game creator.
+	 */
+	private Key key;
+	private Barrier barrier;
+
+	/**
 	 * Constructor for <code> GameScreen </code>, using the game creator
 	 * in <code> MyGame </code> to create all main game and UI assets.
 	 *
@@ -100,7 +111,11 @@ public class GameScreen implements Screen {
 
 		survey = new NPC(560, 370, "NPC.png", "Hey!\nCan I get a moment of your" +
 				"\ntime to take a quick survey.");
-        clockInst = new Clock(50, 40);
+		clockInst = new Clock(50, 40);
+
+		// Add Key and barrier near spawn
+		key = new Key(560, 400);
+		barrier = new Barrier(85, 450);
 
 		font = new BitmapFont();
 
@@ -176,25 +191,30 @@ public class GameScreen implements Screen {
 
 		// Decreases time if talked to survey NPC
 		if (survey.isTalked() && !surveyTimePenaltyAdded) {
+			negativeEvents++;
 			gameTimer.decrementTimer(15f);
 			surveyTimePenaltyAdded = true;
 		}
 
-        // Decreases time if talked to survey NPC
-        if (clockInst.isCollected() && !clockTimeBonusAdded) {
-            gameTimer.incrementTimer(30f);
-            clockTimeBonusAdded = true;
-            clockInst.render(batch);
-        }
+		// Decreases time if talked to survey NPC
+		if (clockInst.isCollected() && !clockTimeBonusAdded) {
+			gameTimer.incrementTimer(30f);
+			clockTimeBonusAdded = true;
+			clockInst.render(batch);
+		}
 
 		friend.update(player);
 		sign.update(player);
 		survey.update(player);
-        clockInst.update(player);
+		clockInst.update(player);
 		dean.update(delta);
+		barrier.update(delta);
 
 		if (player.getPosition().dst(dean.getPosition()) < 16f) {
 			player.getPosition().set(145, 70);
+			if (timesCaughtByDean == 0) {
+				negativeEvents++;
+			}
 			timesCaughtByDean++;
 			dean.resetToStart(timesCaughtByDean); // send the dean back to his starting position or other side of the
 													// map to ensure he can't spawn camp the player
@@ -225,6 +245,21 @@ public class GameScreen implements Screen {
 				}
 			}
 		}
+		// If you haven't collected the key and are within range
+		if (!key.isCollected() && player.getPosition().dst(key.getPosition()) <= 16) {
+			if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+				key.collect();
+			}
+		}
+
+		// If you are near the locked barrier and have the key -> unlock it
+		if (barrier.isLocked() && key.isCollected() && !key.isUsed()
+				&& player.getPosition().dst(barrier.getPosition()) < 32) {
+			if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+				barrier.unlock();
+				key.useKey();
+			}
+		}
 
 		camera.position.set(player.getPosition().x, player.getPosition().y, 0);
 		camera.update();
@@ -237,10 +272,12 @@ public class GameScreen implements Screen {
 
 		// switch to screen coordinates for the UI elements
 		batch.setProjectionMatrix(uiStage.getCamera().combined);
-
-		font.draw(batch, "Positive Event Encountered = " + (locker.isBoostActive() ? "1" : "0") + "/1", 35, 630);
-		font.draw(batch, "Negative Event Encountered = " + (timesCaughtByDean > 0 ? "1" : "0") + "/1", 35, 610);
+		// pls refactor NOW
+		font.draw(batch, "Positive Events Encountered = " + (positiveEvents) + "/2", 35, 630);
+		font.draw(batch, "Negative Events Encountered = " + (negativeEvents) + "/3", 35, 610);
 		font.draw(batch, "Hidden Event Encountered = " + (busTicket.isCollected() ? "1" : "0") + "/1", 35, 590);
+
+		key.renderUI(batch, 35, 500);
 
 		// switch back to the game coordinates for game objects
 		batch.setProjectionMatrix(camera.combined);
@@ -278,7 +315,9 @@ public class GameScreen implements Screen {
 		friend.render(batch);
 		sign.render(batch);
 		survey.render(batch);
-        clockInst.render(batch);
+		clockInst.render(batch);
+		key.render(batch);
+		barrier.render(batch);
 		player.render(batch);
 
 		if (busTicket != null && busTicket.isCollected()) {
@@ -314,9 +353,9 @@ public class GameScreen implements Screen {
 	 * </ul>
 	 */
 	private void handleInput() {
-		float moveSpeed = 1f;
+		float moveSpeed = 3f;
 		if (locker != null && locker.isBoostActive()) {
-			moveSpeed = 2f;
+			moveSpeed = 5f;
 		}
 
 		float newX = player.getPosition().x;
@@ -379,7 +418,19 @@ public class GameScreen implements Screen {
 		}
 
 		if (!isCellBlocked(newX, newY)) {
-			player.getPosition().set(newX, newY);
+			// Only update position if you aren't colliding with barrier
+			// Create 'hitbox' for player & check if touching barrier.
+			boolean collision = false;
+			if (barrier.isLocked()) {
+				Rectangle newPlayerBounds = new Rectangle(newX, newY, 16, 16); // Player is 16x16
+				if (newPlayerBounds.overlaps(barrier.getBounds())) {
+					collision = true;
+					barrier.showMessage();
+				}
+			} // Allow movement
+			if (!collision) {
+				player.getPosition().set(newX, newY);
+			}
 		}
 	}
 
@@ -388,8 +439,8 @@ public class GameScreen implements Screen {
 	 * to move onto it.Useful for checking collisions when moving player or another
 	 * entity.
 	 *
-	 * @param x Horizontal position of cell in the world.
-	 * @param y Vertical position of cell in the world.
+	 * @param x Horizontal position
+	 * @param y Vertical position
 	 * @return True if cell blocks entities to move onto it, False if entities can
 	 *         move onto it.
 	 */
@@ -413,27 +464,21 @@ public class GameScreen implements Screen {
 	}
 
 	/**
-	 * Calculate the player's final score
+	 * Calculate the score after winning.
 	 */
 	public int calculateFinalScore() {
 
-		// convert the time remaining into seconds to have as the player's score
+		// Uses time to determine score
 		int timeRemainingSeconds = (int) gameTimer.getTimeLeft();
 
 		int minutes = (int) (timeRemainingSeconds / 60);
 		int seconds = (int) (timeRemainingSeconds % 60);
 		int timeScore = (minutes * 100) + seconds; // this means 3:24 left on the clock gives a score of 324 before
-													// penalties are taken into account
+													// penalties
 
-		// calculate the penalty to be applied from the number of times the player gets
-		// caught by the dean
-		int deanPenalty = timesCaughtByDean * 5; // 5 marks taken off per time caught
+		int penalties = timesCaughtByDean * 5; // 5 marks taken off per time caught
 
-		// final score calculation
-		int finalScore = timeScore - deanPenalty;
-
-		// make sure the score can't go below 0 which could happen if the dean catches
-		// you enough times
+		int finalScore = timeScore - penalties;
 		return Math.max(0, finalScore);
 	}
 
@@ -459,6 +504,14 @@ public class GameScreen implements Screen {
 		return timesCaughtByDean;
 	}
 
+	public static void incrementPositiveEvents() {
+		positiveEvents++;
+	}
+
+	public static void incrementNegativeEvents() {
+		negativeEvents++;
+	}
+
 	/**
 	 * Dipose of all assets and UI elements when game screen is left i.e.
 	 * when the player wins the game or quits.
@@ -481,11 +534,13 @@ public class GameScreen implements Screen {
 		if (busTicket != null) {
 			busTicket.dispose();
 		}
+		key.dispose();
+		barrier.dispose();
 	}
 
-    public void addTime() {
-        gameTimer.incrementTimer(30f);
-    }
+	public void addTime() {
+		gameTimer.incrementTimer(30f);
+	}
 
 	/** Unimplemented */
 	@Override

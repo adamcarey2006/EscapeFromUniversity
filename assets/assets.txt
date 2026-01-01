@@ -44,17 +44,20 @@ Tile Maps/wooden.png
 Tile Maps/wooden_door_b.png
 Water_Middle.png
 Water_Tile.png
+barrier.png
 bus-ticket.png
 chest_01.png
 ding.wav
 flooring.png
 grass.png
+key.png
 libgdx.png
 locker.png
 objects.png
 plains.png
 playerold.png
 signpost.png
+snack.png
 ui/PixelatedEleganceRegular-ovyAA.fnt
 ui/PixelatedEleganceRegular-ovyAA.png
 ui/PixelatedEleganceRegular-ovyAA.ttf

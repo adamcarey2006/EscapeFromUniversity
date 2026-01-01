@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-
 /**
  * <code> Clock </code> represents the clock event used to add to the timer
  * , containing both the actual sprite the user can interact with
@@ -42,9 +41,9 @@ public class Clock {
     public void update(Player player) {
         if (player.getPosition().dst(position) < 10f && !isCollected) {
             isCollected = true;
+            GameScreen.incrementPositiveEvents();
         }
     }
-
 
     /**
      * Render clock sprite within given sprite batch.
