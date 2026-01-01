@@ -43,10 +43,14 @@ public class NPC {
 	 * @param player Player object.
 	 */
 	public void update(Player player) {
-		if (player.getPosition().dst(position) < 50f &&
+		if (player.getPosition().dst(position) < 30f &&
 				Gdx.input.isKeyJustPressed(Input.Keys.E)) {
 			showMessage = true;
             talked = true;
+            if (this.numTalked == 0 && this.speech != ("Hey!\nCan I get a moment of your" +
+                "\ntime to take a quick survey.")) {
+                GameScreen.incrementPositiveEvents();
+            }
             numTalked += 1;
 		}
 

@@ -64,13 +64,16 @@ public class GameScreen implements Screen {
 	private NPC friend;
 	private NPC survey;
 	private int timesCaughtByDean = 0;
-	private static int negativeEvents = 0;
-	private static int positiveEvents = 0;
+	private static int negativeEvents;
+	private static int positiveEvents;
+    private static int hiddenEvents;
 	private NPC sign;
-	private Clock clockInst;
+	private Item clock;
+    private Item Zzzz;
 	private boolean friendSpeechUpdated = false;
 	private boolean surveyTimePenaltyAdded = false;
 	private boolean clockTimeBonusAdded = false;
+    private boolean ZzzzTimePenaltyAdded = false;
 
 	/**
 	 * Constructor for <code> GameScreen </code>, using the game creator
@@ -90,6 +93,10 @@ public class GameScreen implements Screen {
 	public GameScreen(MyGame game, String username, int[] achLog) {
 		this.game = game;
 		this.achLog = achLog;
+
+        negativeEvents = 0;
+        positiveEvents = 0;
+        hiddenEvents = 0;
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, MAP_WIDTH, MAP_HEIGHT);
@@ -111,11 +118,12 @@ public class GameScreen implements Screen {
 
 		survey = new NPC(560, 370, "NPC.png", "Hey!\nCan I get a moment of your" +
 				"\ntime to take a quick survey.");
-		clockInst = new Clock(50, 40);
+		clock = new Item(50, 40, "Clock.png");
+        Zzzz = new Item(265, 560, "Clock.png");
 
 		// Add Key and barrier near spawn
-		key = new Key(560, 400);
-		barrier = new Barrier(85, 450);
+		key = new Key(470, 435);
+		barrier = new Barrier(95, 450);
 
 		font = new BitmapFont();
 
@@ -186,34 +194,45 @@ public class GameScreen implements Screen {
 			String newSpeech = ("Hey " + player.getUsername()
 					+ "!\nI don't know anything else...\nStop asking me.");
 			friend.setSpeech(newSpeech);
+            incrementHiddenEvents();
 			friendSpeechUpdated = true;
 		}
 
 		// Decreases time if talked to survey NPC
 		if (survey.isTalked() && !surveyTimePenaltyAdded) {
-			negativeEvents++;
+			incrementNegativeEvents();
 			gameTimer.decrementTimer(15f);
 			surveyTimePenaltyAdded = true;
 		}
 
-		// Decreases time if talked to survey NPC
-		if (clockInst.isCollected() && !clockTimeBonusAdded) {
+		// Increases time if walked over clock
+		if (clock.isCollected() && !clockTimeBonusAdded) {
 			gameTimer.incrementTimer(30f);
 			clockTimeBonusAdded = true;
-			clockInst.render(batch);
+            incrementPositiveEvents();
+			clock.render(batch);
 		}
+
+        // Decreases time if walked over Zzzz
+        if (Zzzz.isCollected() && !ZzzzTimePenaltyAdded) {
+            gameTimer.decrementTimer(20f);
+            ZzzzTimePenaltyAdded = true;
+            incrementNegativeEvents();
+            Zzzz.render(batch);
+        }
 
 		friend.update(player);
 		sign.update(player);
 		survey.update(player);
-		clockInst.update(player);
+		clock.update(player);
+        Zzzz.update(player);
 		dean.update(delta);
 		barrier.update(delta);
 
 		if (player.getPosition().dst(dean.getPosition()) < 16f) {
 			player.getPosition().set(145, 70);
 			if (timesCaughtByDean == 0) {
-				negativeEvents++;
+				incrementNegativeEvents();
 			}
 			timesCaughtByDean++;
 			dean.resetToStart(timesCaughtByDean); // send the dean back to his starting position or other side of the
@@ -273,9 +292,9 @@ public class GameScreen implements Screen {
 		// switch to screen coordinates for the UI elements
 		batch.setProjectionMatrix(uiStage.getCamera().combined);
 		// pls refactor NOW
-		font.draw(batch, "Positive Events Encountered = " + (positiveEvents) + "/2", 35, 630);
-		font.draw(batch, "Negative Events Encountered = " + (negativeEvents) + "/3", 35, 610);
-		font.draw(batch, "Hidden Event Encountered = " + (busTicket.isCollected() ? "1" : "0") + "/1", 35, 590);
+		font.draw(batch, "Positive Events Encountered = " + (positiveEvents) + "/3", 35, 630);
+		font.draw(batch, "Negative Events Encountered = " + (negativeEvents) + "/5", 35, 610);
+		font.draw(batch, "Hidden Event Encountered = " + (hiddenEvents) + "/3", 35, 590);
 
 		key.renderUI(batch, 35, 500);
 
@@ -315,7 +334,8 @@ public class GameScreen implements Screen {
 		friend.render(batch);
 		sign.render(batch);
 		survey.render(batch);
-		clockInst.render(batch);
+		clock.render(batch);
+        Zzzz.render(batch);
 		key.render(batch);
 		barrier.render(batch);
 		player.render(batch);
@@ -393,6 +413,7 @@ public class GameScreen implements Screen {
 
 		if (canPickUpTicket && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
 			busTicket.collect();
+            incrementHiddenEvents();
 			canPickUpTicket = false;
 		}
 
@@ -505,12 +526,16 @@ public class GameScreen implements Screen {
 	}
 
 	public static void incrementPositiveEvents() {
-		positiveEvents++;
+        positiveEvents++;
 	}
 
 	public static void incrementNegativeEvents() {
 		negativeEvents++;
 	}
+
+    public static void incrementHiddenEvents() {
+        hiddenEvents++;
+    }
 
 	/**
 	 * Dipose of all assets and UI elements when game screen is left i.e.
