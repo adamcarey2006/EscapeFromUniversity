@@ -66,14 +66,14 @@ public class GameScreen implements Screen {
 	private int timesCaughtByDean = 0;
 	private static int negativeEvents;
 	private static int positiveEvents;
-    private static int hiddenEvents;
+	private static int hiddenEvents;
 	private NPC sign;
 	private Item clock;
-    private Item Zzzz;
+	private Item Zzzz;
 	private boolean friendSpeechUpdated = false;
 	private boolean surveyTimePenaltyAdded = false;
 	private boolean clockTimeBonusAdded = false;
-    private boolean ZzzzTimePenaltyAdded = false;
+	private boolean ZzzzTimePenaltyAdded = false;
 
 	/**
 	 * Constructor for <code> GameScreen </code>, using the game creator
@@ -94,9 +94,9 @@ public class GameScreen implements Screen {
 		this.game = game;
 		this.achLog = achLog;
 
-        negativeEvents = 0;
-        positiveEvents = 0;
-        hiddenEvents = 0;
+		negativeEvents = 0;
+		positiveEvents = 0;
+		hiddenEvents = 0;
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, MAP_WIDTH, MAP_HEIGHT);
@@ -119,7 +119,7 @@ public class GameScreen implements Screen {
 		survey = new NPC(560, 370, "NPC.png", "Hey!\nCan I get a moment of your" +
 				"\ntime to take a quick survey.");
 		clock = new Item(50, 40, "Clock.png");
-        Zzzz = new Item(265, 560, "Clock.png");
+		Zzzz = new Item(265, 560, "Clock.png");
 
 		// Add Key and barrier near spawn
 		key = new Key(470, 435);
@@ -194,7 +194,7 @@ public class GameScreen implements Screen {
 			String newSpeech = ("Hey " + player.getUsername()
 					+ "!\nI don't know anything else...\nStop asking me.");
 			friend.setSpeech(newSpeech);
-            incrementHiddenEvents();
+			incrementHiddenEvents();
 			friendSpeechUpdated = true;
 		}
 
@@ -209,23 +209,23 @@ public class GameScreen implements Screen {
 		if (clock.isCollected() && !clockTimeBonusAdded) {
 			gameTimer.incrementTimer(30f);
 			clockTimeBonusAdded = true;
-            incrementPositiveEvents();
+			incrementPositiveEvents();
 			clock.render(batch);
 		}
 
-        // Decreases time if walked over Zzzz
-        if (Zzzz.isCollected() && !ZzzzTimePenaltyAdded) {
-            gameTimer.decrementTimer(20f);
-            ZzzzTimePenaltyAdded = true;
-            incrementNegativeEvents();
-            Zzzz.render(batch);
-        }
+		// Decreases time if walked over Zzzz
+		if (Zzzz.isCollected() && !ZzzzTimePenaltyAdded) {
+			gameTimer.decrementTimer(20f);
+			ZzzzTimePenaltyAdded = true;
+			incrementNegativeEvents();
+			Zzzz.render(batch);
+		}
 
 		friend.update(player);
 		sign.update(player);
 		survey.update(player);
 		clock.update(player);
-        Zzzz.update(player);
+		Zzzz.update(player);
 		dean.update(delta);
 		barrier.update(delta);
 
@@ -264,10 +264,16 @@ public class GameScreen implements Screen {
 				}
 			}
 		}
-		// If you haven't collected the key and are within range
+		// If you haven't collected the key and are within range, open the equation
+		// screen
 		if (!key.isCollected() && player.getPosition().dst(key.getPosition()) <= 16) {
 			if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-				key.collect();
+				game.setScreen(new EquationScreen(game, this, new Runnable() {
+					@Override
+					public void run() {
+						key.collect();
+					}
+				}));
 			}
 		}
 
@@ -335,7 +341,7 @@ public class GameScreen implements Screen {
 		sign.render(batch);
 		survey.render(batch);
 		clock.render(batch);
-        Zzzz.render(batch);
+		Zzzz.render(batch);
 		key.render(batch);
 		barrier.render(batch);
 		player.render(batch);
@@ -413,7 +419,7 @@ public class GameScreen implements Screen {
 
 		if (canPickUpTicket && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
 			busTicket.collect();
-            incrementHiddenEvents();
+			incrementHiddenEvents();
 			canPickUpTicket = false;
 		}
 
@@ -526,16 +532,16 @@ public class GameScreen implements Screen {
 	}
 
 	public static void incrementPositiveEvents() {
-        positiveEvents++;
+		positiveEvents++;
 	}
 
 	public static void incrementNegativeEvents() {
 		negativeEvents++;
 	}
 
-    public static void incrementHiddenEvents() {
-        hiddenEvents++;
-    }
+	public static void incrementHiddenEvents() {
+		hiddenEvents++;
+	}
 
 	/**
 	 * Dipose of all assets and UI elements when game screen is left i.e.
