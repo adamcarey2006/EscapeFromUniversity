@@ -33,7 +33,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 public class GameScreen implements Screen {
 	private final MyGame game;
 	private boolean isPaused = false;
-    private int[] achLog;
+	private int[] achLog;
 
 	TiledMap tiledMap;
 	OrthogonalTiledMapRenderer mapRenderer;
@@ -58,12 +58,31 @@ public class GameScreen implements Screen {
 
 	private final int MAP_WIDTH = 640;
 	private final int MAP_HEIGHT = 640;
+	private final float SQRT_2_INV = 0.70710678118f;
 
 	private Dean dean;
 	private NPC friend;
+	private NPC survey;
 	private int timesCaughtByDean = 0;
-	private BitmapFont catchCounterFont;
+	private static int negativeEvents;
+	private static int positiveEvents;
+	private static int hiddenEvents;
 	private NPC sign;
+	private Item clock;
+	private Item Zzzz;
+	private boolean friendSpeechUpdated = false;
+	private boolean surveyTimePenaltyAdded = false;
+	private boolean clockTimeBonusAdded = false;
+	private boolean ZzzzTimePenaltyAdded = false;
+
+	/**
+	 * Constructor for <code> GameScreen </code>, using the game creator
+	 * in <code> MyGame </code> to create all main game and UI assets.
+	 *
+	 * @param game Game creator.
+	 */
+	private Key key;
+	private Barrier barrier;
 
 	/**
 	 * Constructor for <code> GameScreen </code>, using the game creator
@@ -73,7 +92,11 @@ public class GameScreen implements Screen {
 	 */
 	public GameScreen(MyGame game, String username, int[] achLog) {
 		this.game = game;
-        this.achLog = achLog;
+		this.achLog = achLog;
+
+		negativeEvents = 0;
+		positiveEvents = 0;
+		hiddenEvents = 0;
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, MAP_WIDTH, MAP_HEIGHT);
@@ -91,10 +114,17 @@ public class GameScreen implements Screen {
 		dean = new Dean(90, 450, player, this);
 		friend = new NPC(560, 300, "NPC.png", "Hey " + player.getUsername()
 				+ "!\nDon't forget your bus ticket...\nIt must've flown out your window again.");
-		sign = new NPC(175, 200, "signpost.png", "North - Bus stop\nEast - Campus");
+		sign = new NPC(175, 200, "signpost.png", "North - Bus stop (exit)\nEast - Campus");
 
-		catchCounterFont = new BitmapFont();
-		catchCounterFont.getData().setScale(1.5f);
+		survey = new NPC(560, 370, "NPC.png", "Hey!\nCan I get a moment of your" +
+				"\ntime to take a quick survey.");
+		clock = new Item(50, 40, "Clock.png");
+		Zzzz = new Item(265, 560, "Clock.png");
+
+		// Add Key and barrier near spawn
+		key = new Key(470, 435);
+		barrier = new Barrier(95, 450);
+
 		font = new BitmapFont();
 
 		MapObjects eventObjects = tiledMap.getLayers().get("Events").getObjects();
@@ -159,13 +189,51 @@ public class GameScreen implements Screen {
 
 			return; // Skip the rest of the game logic
 		}
+		// Updates NPC speech
+		if (friend.manyTalks() && !friendSpeechUpdated) {
+			String newSpeech = ("Hey " + player.getUsername()
+					+ "!\nI don't know anything else...\nStop asking me.");
+			friend.setSpeech(newSpeech);
+			incrementHiddenEvents();
+			friendSpeechUpdated = true;
+		}
+
+		// Decreases time if talked to survey NPC
+		if (survey.isTalked() && !surveyTimePenaltyAdded) {
+			incrementNegativeEvents();
+			gameTimer.decrementTimer(15f);
+			surveyTimePenaltyAdded = true;
+		}
+
+		// Increases time if walked over clock
+		if (clock.isCollected() && !clockTimeBonusAdded) {
+			gameTimer.incrementTimer(30f);
+			clockTimeBonusAdded = true;
+			incrementPositiveEvents();
+			clock.render(batch);
+		}
+
+		// Decreases time if walked over Zzzz
+		if (Zzzz.isCollected() && !ZzzzTimePenaltyAdded) {
+			gameTimer.decrementTimer(20f);
+			ZzzzTimePenaltyAdded = true;
+			incrementNegativeEvents();
+			Zzzz.render(batch);
+		}
 
 		friend.update(player);
 		sign.update(player);
+		survey.update(player);
+		clock.update(player);
+		Zzzz.update(player);
 		dean.update(delta);
+		barrier.update(delta);
 
 		if (player.getPosition().dst(dean.getPosition()) < 16f) {
 			player.getPosition().set(145, 70);
+			if (timesCaughtByDean == 0) {
+				incrementNegativeEvents();
+			}
 			timesCaughtByDean++;
 			dean.resetToStart(timesCaughtByDean); // send the dean back to his starting position or other side of the
 													// map to ensure he can't spawn camp the player
@@ -196,6 +264,27 @@ public class GameScreen implements Screen {
 				}
 			}
 		}
+		// If you haven't collected the key and are within range, open the equation
+		// screen
+		if (!key.isCollected() && player.getPosition().dst(key.getPosition()) <= 16) {
+			if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+				game.setScreen(new EquationScreen(game, this, new Runnable() {
+					@Override
+					public void run() {
+						key.collect();
+					}
+				}));
+			}
+		}
+
+		// If you are near the locked barrier and have the key -> unlock it
+		if (barrier.isLocked() && key.isCollected() && !key.isUsed()
+				&& player.getPosition().dst(barrier.getPosition()) < 32) {
+			if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+				barrier.unlock();
+				key.useKey();
+			}
+		}
 
 		camera.position.set(player.getPosition().x, player.getPosition().y, 0);
 		camera.update();
@@ -208,20 +297,22 @@ public class GameScreen implements Screen {
 
 		// switch to screen coordinates for the UI elements
 		batch.setProjectionMatrix(uiStage.getCamera().combined);
+		// pls refactor NOW
+		font.draw(batch, "Positive Events Encountered = " + (positiveEvents) + "/3", 35, 630);
+		font.draw(batch, "Negative Events Encountered = " + (negativeEvents) + "/5", 35, 610);
+		font.draw(batch, "Hidden Event Encountered = " + (hiddenEvents) + "/3", 35, 590);
 
-		font.draw(batch, "Positive Event Encountered = " + (locker.isBoostActive() ? "1" : "0") + "/1", 35, 630);
-		font.draw(batch, "Negative Event Encountered = " + (timesCaughtByDean > 0 ? "1" : "0") + "/1", 35, 610);
-		font.draw(batch, "Hidden Event Encountered = " + (busTicket.isCollected() ? "1" : "0") + "/1", 35, 590);
+		key.renderUI(batch, 35, 500);
 
 		// switch back to the game coordinates for game objects
 		batch.setProjectionMatrix(camera.combined);
 
-        if (locker.isBoostActive()) {
-            achLog[2] = 1;
-        }
-        if (NPC.isTalked()) {
-            achLog[3] = 1;
-        }
+		if (locker.isBoostActive()) {
+			achLog[2] = 1;
+		}
+		if (friend.isTalked() && survey.isTalked()) {
+			achLog[3] = 1;
+		}
 
 		if (busTicket != null) {
 			busTicket.render(batch);
@@ -248,6 +339,11 @@ public class GameScreen implements Screen {
 		dean.render(batch);
 		friend.render(batch);
 		sign.render(batch);
+		survey.render(batch);
+		clock.render(batch);
+		Zzzz.render(batch);
+		key.render(batch);
+		barrier.render(batch);
 		player.render(batch);
 
 		if (busTicket != null && busTicket.isCollected()) {
@@ -283,9 +379,9 @@ public class GameScreen implements Screen {
 	 * </ul>
 	 */
 	private void handleInput() {
-		float moveSpeed = 1f;
+		float moveSpeed = 3f;
 		if (locker != null && locker.isBoostActive()) {
-			moveSpeed = 2f;
+			moveSpeed = 5f;
 		}
 
 		float newX = player.getPosition().x;
@@ -294,7 +390,7 @@ public class GameScreen implements Screen {
 		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 			float originalSpeed = moveSpeed;
 			if (Gdx.input.isKeyPressed(Input.Keys.A) | Gdx.input.isKeyPressed(Input.Keys.D)) {
-				moveSpeed = moveSpeed * 0.70710678118f;
+				moveSpeed = moveSpeed * SQRT_2_INV;
 			}
 			newY += moveSpeed;
 			player.setDirection(Player.Direction.UP);
@@ -304,7 +400,7 @@ public class GameScreen implements Screen {
 		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
 			float originalSpeed = moveSpeed;
 			if (Gdx.input.isKeyPressed(Input.Keys.A) | Gdx.input.isKeyPressed(Input.Keys.D)) {
-				moveSpeed = moveSpeed * 0.70710678118f;
+				moveSpeed = moveSpeed * SQRT_2_INV;
 			}
 			newY -= moveSpeed;
 			player.setDirection(Player.Direction.DOWN);
@@ -323,6 +419,7 @@ public class GameScreen implements Screen {
 
 		if (canPickUpTicket && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
 			busTicket.collect();
+			incrementHiddenEvents();
 			canPickUpTicket = false;
 		}
 
@@ -340,13 +437,27 @@ public class GameScreen implements Screen {
 			int finalScore = calculateFinalScore();
 			int timeRemaining = (int) gameTimer.getTimeLeft();
 			int timesCaught = getTimesCaughtByDean();
-            if (timesCaught == 0) {achLog[0] = 1;}
+			if (timesCaught == 0) {
+				achLog[0] = 1;
+			}
 			// send the player to the win screen
-			game.setScreen(new WinScreen(game, finalScore, timeRemaining, timesCaught, player.getUsername(), achLog));
+			game.setScreen(new WinScreen(game, finalScore, timeRemaining, timesCaught, player.getUsername(), achLog, false));
 		}
 
 		if (!isCellBlocked(newX, newY)) {
-			player.getPosition().set(newX, newY);
+			// Only update position if you aren't colliding with barrier
+			// Create 'hitbox' for player & check if touching barrier.
+			boolean collision = false;
+			if (barrier.isLocked()) {
+				Rectangle newPlayerBounds = new Rectangle(newX, newY, 16, 16); // Player is 16x16
+				if (newPlayerBounds.overlaps(barrier.getBounds())) {
+					collision = true;
+					barrier.showMessage();
+				}
+			} // Allow movement
+			if (!collision) {
+				player.getPosition().set(newX, newY);
+			}
 		}
 	}
 
@@ -355,8 +466,8 @@ public class GameScreen implements Screen {
 	 * to move onto it.Useful for checking collisions when moving player or another
 	 * entity.
 	 *
-	 * @param x Horizontal position of cell in the world.
-	 * @param y Vertical position of cell in the world.
+	 * @param x Horizontal position
+	 * @param y Vertical position
 	 * @return True if cell blocks entities to move onto it, False if entities can
 	 *         move onto it.
 	 */
@@ -380,27 +491,21 @@ public class GameScreen implements Screen {
 	}
 
 	/**
-	 * Calculate the player's final score
+	 * Calculate the score after winning.
 	 */
 	public int calculateFinalScore() {
 
-		// convert the time remaining into seconds to have as the player's score
+		// Uses time to determine score
 		int timeRemainingSeconds = (int) gameTimer.getTimeLeft();
 
 		int minutes = (int) (timeRemainingSeconds / 60);
 		int seconds = (int) (timeRemainingSeconds % 60);
 		int timeScore = (minutes * 100) + seconds; // this means 3:24 left on the clock gives a score of 324 before
-													// penalties are taken into account
+													// penalties
 
-		// calculate the penalty to be applied from the number of times the player gets
-		// caught by the dean
-		int deanPenalty = timesCaughtByDean * 5; // 5 marks taken off per time caught
+		int penalties = timesCaughtByDean * 5; // 5 marks taken off per time caught
 
-		// final score calculation
-		int finalScore = timeScore - deanPenalty;
-
-		// make sure the score can't go below 0 which could happen if the dean catches
-		// you enough times
+		int finalScore = timeScore - penalties;
 		return Math.max(0, finalScore);
 	}
 
@@ -426,6 +531,18 @@ public class GameScreen implements Screen {
 		return timesCaughtByDean;
 	}
 
+	public static void incrementPositiveEvents() {
+		positiveEvents++;
+	}
+
+	public static void incrementNegativeEvents() {
+		negativeEvents++;
+	}
+
+	public static void incrementHiddenEvents() {
+		hiddenEvents++;
+	}
+
 	/**
 	 * Dipose of all assets and UI elements when game screen is left i.e.
 	 * when the player wins the game or quits.
@@ -442,12 +559,18 @@ public class GameScreen implements Screen {
 		font.dispose();
 		uiStage.dispose();
 		dean.dispose();
-		catchCounterFont.dispose();
 		friend.dispose();
+		survey.dispose();
 		sign.dispose();
 		if (busTicket != null) {
 			busTicket.dispose();
 		}
+		key.dispose();
+		barrier.dispose();
+	}
+
+	public void addTime() {
+		gameTimer.incrementTimer(30f);
 	}
 
 	/** Unimplemented */

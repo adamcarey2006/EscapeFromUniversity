@@ -21,11 +21,11 @@ public class WinScreen implements Screen {
 	private BitmapFont font;
 
 	// scoring system variables
-	private int finalScore;
+    int finalScore;
 	private int timeRemaining;
 	private int timesCaught;
 	private String username;
-    private int[] achLog;
+	private int[] achLog;
 
 	/**
 	 * Constructor for <code> WinScreen </code>, using the game creator in
@@ -37,22 +37,27 @@ public class WinScreen implements Screen {
 	 * @param timesCaught   Number of times the player is caught by the dean
 	 * @param username      The player's username
 	 */
-	public WinScreen(MyGame game, int finalScore, int timeRemaining, int timesCaught, String username, int[] achLog) {
+	public WinScreen(MyGame game, int finalScore, int timeRemaining, int timesCaught, String username, int[] achLog, boolean headless) {
 		this.game = game;
 		this.finalScore = finalScore;
 		this.timeRemaining = timeRemaining;
 		this.timesCaught = timesCaught;
 		this.username = username;
-        this.achLog = achLog;
+		this.achLog = achLog;
 
-		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 640, 480);
+        if (finalScore >= 400) {
+            achLog[1] = 1;
+        }
 
-		batch = new SpriteBatch();
-		font = new BitmapFont();
-		font.getData().setScale(2.5f);
+        if (!headless) {
+            camera = new OrthographicCamera();
+            camera.setToOrtho(false, 640, 480);
 
-        if (finalScore >= 400) {achLog[1] = 1;}
+            batch = new SpriteBatch();
+            font = new BitmapFont();
+            font.getData().setScale(2.5f);
+        }
+
 	}
 
 	/**
@@ -74,11 +79,15 @@ public class WinScreen implements Screen {
 		font.draw(batch, "Final Score = " + finalScore, 188, 310);
 		font.draw(batch, "Dean Penalty = " + timesCaught * 5, 188, 270);
 		font.draw(batch, "Press SPACE to return to menu", 100, 150);
+		font.draw(batch, "Press ESC to quit", 100, 130);
 		batch.end();
 
 		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 			game.addScore(username, finalScore);
 			game.setScreen(new MenuScreen(game, achLog));
+		}
+		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+			Gdx.app.exit();
 		}
 	}
 
