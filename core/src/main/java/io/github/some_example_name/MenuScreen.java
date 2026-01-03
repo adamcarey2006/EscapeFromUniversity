@@ -33,7 +33,7 @@ public class MenuScreen implements Screen {
 	private SpriteBatch batch;
 	private BitmapFont font;
 	private FitViewport viewport;
-    private int[] achLog;
+	private int[] achLog;
 
 	private Stage stage;
 	private Skin skin;
@@ -48,9 +48,9 @@ public class MenuScreen implements Screen {
 	 *
 	 * @param game Game creator.
 	 */
-	public MenuScreen(MyGame game,int[] achLog) {
+	public MenuScreen(MyGame game, int[] achLog) {
 		this.game = game;
-        this.achLog = achLog;
+		this.achLog = achLog;
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, MENU_WIDTH, MENU_HEIGHT);
@@ -60,34 +60,18 @@ public class MenuScreen implements Screen {
 		font.getData().setScale(2f); // this makes the text bigger
 
 		viewport = new FitViewport(MENU_WIDTH, MENU_HEIGHT, camera);
-		// New code for stage & textbox:
-		skin = new Skin(Gdx.files.internal("ui/uiskin.json")); // loads the skin file
-
-		// Programmatically generate resources for TextField since uiskin.json/atlas
-		// lacks them
-		Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-		pixmap.setColor(Color.WHITE);
-		pixmap.fill();
-		skin.add("white", new Texture(pixmap));
-
-		TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
-		textFieldStyle.font = skin.getFont("PIXELFONT");
-		textFieldStyle.fontColor = Color.WHITE;
-		textFieldStyle.cursor = skin.newDrawable("white", Color.WHITE);
-		textFieldStyle.background = skin.newDrawable("white", Color.DARK_GRAY);
-
-		skin.add("default", textFieldStyle);
+		skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
 
 		stage = new Stage(viewport); // sets viewport for stage
 
 		Table table = new Table();
 		table.setFillParent(true);
 		stage.addActor(table);
-		Label nameLabel = new Label("Enter Username:", skin);// creates label
-		usernameField = new TextField("", skin);
-		table.add(nameLabel).padBottom(10);// place label on stage
-		table.row();// place text field on stage
-		table.add(usernameField).width(200);// place text field on stage
+		Label nameLabel = new Label("Enter Username:", skin);
+		usernameField = new TextField(game.getUsername(), skin);
+		table.add(nameLabel).padBottom(10);
+		table.row();
+		table.add(usernameField).width(250).height(41);
 	}
 
 	/**
@@ -99,7 +83,7 @@ public class MenuScreen implements Screen {
 	}
 
 	/**
-	 * Process input then render new frame for the main menu.
+	 * Renders the main menu screen & subsequent screens upon input.
 	 *
 	 * @param delta Time in seconds since last frame finished rendering.
 	 * @see com.badlogic.gdx.Screen#render Screen.render().
@@ -117,33 +101,37 @@ public class MenuScreen implements Screen {
 		font.draw(batch, "Escape from University", 180, 375);
 		font.draw(batch, "Press SPACE to Start", 32, 145);
 		font.draw(batch, "Press ESC to Exit", 32, 115);
-
-		// Display Leaderboard
 		font.draw(batch, "Leaderboard:", 380, 200);
-		java.util.List<java.util.Map.Entry<String, Integer>> leaderboard = game.getLeaderboard();// gets the leaderboard
+		// Get leaderboard values & render
+		java.util.List<java.util.Map.Entry<String, Integer>> leaderboard = game.getLeaderboard();
 		if (leaderboard != null) {
-			int y = 170;// y position of the first score
-			for (int i = 0; i < Math.min(leaderboard.size(), 5); i++) {// displays the top 5 scores
-				java.util.Map.Entry<String, Integer> entry = leaderboard.get(i);// gets the entry at the current index
-				font.draw(batch, (i + 1) + ". " + entry.getKey() + ": " + entry.getValue(), 380, y);// display the score
-				y -= 30;// places the next score below the previous one
+			int y = 170;
+			for (int i = 0; i < Math.min(leaderboard.size(), 5); i++) { // Only 5 rows are displayed
+				java.util.Map.Entry<String, Integer> entry = leaderboard.get(i);
+				font.draw(batch, (i + 1) + ". " + entry.getKey() + ": " + entry.getValue(), 380, y);// Seperates
+																									// username & score
+																									// (key & value)
+				y -= 30;
 			}
 		}
 		batch.end();
 
-		stage.act(delta);// update + draw stage
+		stage.act(delta);// Update/render stage
 		stage.draw();
-
+		// Handling user inputs
 		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 			String username = usernameField.getText();
 			if (username.isEmpty()) {
-				username = "Mark"; // Default username
+				username = "John Pork";
 			}
-			game.setScreen(new TutorialScreen(game, username, achLog));// go to tutorial screen
+			game.setUsername(username);
+			game.setScreen(new TutorialScreen(game, username, achLog));
 		} else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
 			Gdx.app.exit();
 		} else if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
-			game.setScreen(new Achievement(game, achLog));
+			game.setUsername(usernameField.getText());
+			game.setScreen(new Achievement(game, achLog)); // Go to achievement screen, pass current username &
+															// achievements
 		}
 	}
 
@@ -160,8 +148,8 @@ public class MenuScreen implements Screen {
 	}
 
 	/**
-	 * Dispose menu assets when menu is exited or program is quit.
-	 *
+	 * Dispose of assets
+	 * 
 	 * @see com.badlogic.gdx.Screen#dispose Screen.dispose().
 	 */
 	@Override

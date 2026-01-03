@@ -20,12 +20,21 @@ import java.util.AbstractMap;
 public class MyGame extends Game {
 
 	private List<Map.Entry<String, Integer>> leaderboard;// leaderboard represented by list
+	private String username = "";
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getUsername() {
+		return this.username;
+	}
 
 	/** Create game, starting at the menu score. */
 	@Override
 	public void create() {
 		leaderboard = new ArrayList<>();
-        int[] achLog = {0,0,0,0};
+		int[] achLog = { 0, 0, 0, 0 };
 		setScreen(new MenuScreen(this, achLog));
 	}
 

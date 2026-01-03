@@ -25,7 +25,7 @@ public class WinScreen implements Screen {
 	private int timeRemaining;
 	private int timesCaught;
 	private String username;
-    private int[] achLog;
+	private int[] achLog;
 
 	/**
 	 * Constructor for <code> WinScreen </code>, using the game creator in
@@ -43,7 +43,7 @@ public class WinScreen implements Screen {
 		this.timeRemaining = timeRemaining;
 		this.timesCaught = timesCaught;
 		this.username = username;
-        this.achLog = achLog;
+		this.achLog = achLog;
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 640, 480);
@@ -52,7 +52,9 @@ public class WinScreen implements Screen {
 		font = new BitmapFont();
 		font.getData().setScale(2.5f);
 
-        if (finalScore >= 400) {achLog[1] = 1;}
+		if (finalScore >= 400) {
+			achLog[1] = 1;
+		}
 	}
 
 	/**
@@ -74,11 +76,15 @@ public class WinScreen implements Screen {
 		font.draw(batch, "Final Score = " + finalScore, 188, 310);
 		font.draw(batch, "Dean Penalty = " + timesCaught * 5, 188, 270);
 		font.draw(batch, "Press SPACE to return to menu", 100, 150);
+		font.draw(batch, "Press ESC to quit", 100, 130);
 		batch.end();
 
 		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 			game.addScore(username, finalScore);
 			game.setScreen(new MenuScreen(game, achLog));
+		}
+		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+			Gdx.app.exit();
 		}
 	}
 

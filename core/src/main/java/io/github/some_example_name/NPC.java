@@ -19,7 +19,8 @@ public class NPC {
 	private BitmapFont font;
 	private boolean showMessage = false;
 	private String speech;
-    private static boolean talked = false;
+    private boolean talked = false;
+    private int numTalked = 0;
 
 	/**
 	 * Constructor for <code> NPC </code>, with a set of coordinates.
@@ -42,10 +43,15 @@ public class NPC {
 	 * @param player Player object.
 	 */
 	public void update(Player player) {
-		if (player.getPosition().dst(position) < 50f &&
+		if (player.getPosition().dst(position) < 30f &&
 				Gdx.input.isKeyJustPressed(Input.Keys.E)) {
 			showMessage = true;
             talked = true;
+            if (this.numTalked == 0 && this.speech != ("Hey!\nCan I get a moment of your" +
+                "\ntime to take a quick survey.")) {
+                GameScreen.incrementPositiveEvents();
+            }
+            numTalked += 1;
 		}
 
 		if (showMessage && player.getPosition().dst(position) > 60f) {
@@ -95,7 +101,30 @@ public class NPC {
 		return bounds;
 	}
 
-    public static boolean isTalked() {
+    /**
+     * Get NPC's talked status.
+     *
+     * @return boolean status.
+     */
+    public boolean isTalked() {
         return (talked);
+    }
+
+    /**
+     * Get NPC's times talked.
+     *
+     * @return boolean if number over 3.
+     */
+    public boolean manyTalks() {
+        return (numTalked > 3);
+    }
+
+    /**
+     * Get new speech input.
+     *
+     * @param nSpeech String used by application to change speech.
+     */
+    public void setSpeech(String nSpeech) {
+        speech = nSpeech;
     }
 }
