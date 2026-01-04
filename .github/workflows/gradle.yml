@@ -23,6 +23,13 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x ./gradlew
     - name: Set up JDK 8
+      if: matrix.os == 'macos-latest'
+      uses: actions/setup-java@v4
+      with:
+        java-version: '8'
+        distribution: 'zulu'
+    - name: Set up JDK 8
+      if: matrix.os != 'macos-latest'
       uses: actions/setup-java@v4
       with:
         java-version: '8'
@@ -61,13 +68,13 @@ jobs:
     steps:
       - name: Download Ubuntu Build Artifact
         uses: actions/download-artifact@v7.0.0
-        with: {name: core-1.0.0-ubuntu-latest-.jar}
+        with: {name: core-1.0.0-ubuntu-latest.jar}
       - name: Download Windows Build Artifact
         uses: actions/download-artifact@v7.0.0
-        with: {name: core-1.0.0-windows-latest-.jar}
+        with: {name: core-1.0.0-windows-latest.jar}
       - name: Download Mac Build Artifact
         uses: actions/download-artifact@v7.0.0
-        with: {name: core-1.0.0-macos-latest-.jar}
+        with: {name: core-1.0.0-macos-latest.jar}
       - name: Release
         uses: softprops/action-gh-release@v2
         with: {files: core-1.0.0*.jar}
