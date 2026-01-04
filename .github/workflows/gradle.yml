@@ -38,11 +38,11 @@ jobs:
       with:
 
         name: report-jacoco
-        path: EscapeFromUniversity/core/build/reoports/jacoco/test/html/
+        path: EscapeFromUniversity/core/build/reports/jacoco/test/html/
 
     - name: Uploading JAR
       uses: actions/upload-artifact@v6.0.0
       with:
 
         name: core-1.0.0.jar
-        path: EscapeFromUniversity/core/build/build/libs/core-1.0.0.jar
+        path: EscapeFromUniversity/core/build/libs/core-1.0.0.jar
