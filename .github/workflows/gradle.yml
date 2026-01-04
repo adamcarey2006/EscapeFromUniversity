@@ -32,10 +32,7 @@ jobs:
     - name: Build with Gradle Wrapper
       run: ./gradlew build jacocoTestReport
 
-    - name: Debug build output
-      run: |
-        echo "=== core/build ==="
-        ls -R EscapeFromUniversity/core/build || true
+
 
 
   
@@ -44,11 +41,11 @@ jobs:
       with:
 
         name: report-jacoco
-        path: EscapeFromUniversity/core/build/reports/jacoco/test/html/
+        path: core/build/reports/jacoco/test/html/
 
     - name: Uploading JAR
       uses: actions/upload-artifact@v6.0.0
       with:
 
         name: core-1.0.0.jar
-        path: EscapeFromUniversity/core/build/libs/core-1.0.0.jar
+        path: core/build/libs/core-1.0.0.jar
