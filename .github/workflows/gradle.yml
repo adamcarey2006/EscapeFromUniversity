@@ -32,6 +32,12 @@ jobs:
     - name: Build with Gradle Wrapper
       run: ./gradlew build jacocoTestReport
 
+    - name: Debug build output
+      run: |
+        echo "=== core/build ==="
+        ls -R EscapeFromUniversity/core/build || true
+
+
   
     - name: Uploading JaCoCo coverage report
       uses: actions/upload-artifact@v6.0.0
