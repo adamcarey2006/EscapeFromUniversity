@@ -11,8 +11,10 @@ on:
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, winddows-latest, macos-latest]
+    runs-on: ${{ matrix.os}}
     permissions:
       contents: read
 
@@ -41,14 +43,14 @@ jobs:
       uses: actions/upload-artifact@v6.0.0
       with:
 
-        name: report-jacoco
+        name: report-jacoco-${{ matrix.os}
         path: core/build/reports/jacoco/test/html/
 
     - name: Uploading JAR
       uses: actions/upload-artifact@v6.0.0
       with:
 
-        name: core-1.0.0.jar
+        name: core-1.0.0-${{matrix.os}.jar
         path: core/build/libs/core-1.0.0.jar
   release:
     runs-on: ubuntu-latest
@@ -57,12 +59,16 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Download a Build Artifact
+      - name: Download Ubuntu Build Artifact
         uses: actions/download-artifact@v7.0.0
-        with:
-          name: core-1.0.0.jar
+        with: {name: core-1.0.0-ubuntu-latest-.jar}
+      - name: Download Windows Build Artifact
+        uses: actions/download-artifact@v7.0.0
+        with: {name: core-1.0.0-windows-latest-.jar}
+      - name: Download Mac Build Artifact
+        uses: actions/download-artifact@v7.0.0
+        with: {name: core-1.0.0-macos-latest-.jar}
       - name: Release
         uses: softprops/action-gh-release@v2
-        with:
-          files: core-1.0.0.jar
+        with: {files: core-1.0.0*.jar}
         
