@@ -43,7 +43,7 @@ jobs:
       uses: actions/upload-artifact@v6.0.0
       with:
 
-        name: report-jacoco-${{ matrix.os}
+        name: report-jacoco-${{ matrix.os}}
         path: core/build/reports/jacoco/test/html/
 
     - name: Uploading JAR
