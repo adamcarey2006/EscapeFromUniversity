@@ -64,13 +64,14 @@ public class GameScreen implements Screen {
 	private NPC friend;
 	private NPC survey;
 	private int timesCaughtByDean = 0;
+	/** New feature: Track negative, positive and hidden events */
 	private static int negativeEvents;
 	private static int positiveEvents;
 	private static int hiddenEvents;
 	private NPC sign;
 	private Item clock;
 	private Item Zzzz;
-	private boolean friendSpeechUpdated = false;
+	private int friendSpeechCount = 1;
 	private boolean surveyTimePenaltyAdded = false;
 	private boolean clockTimeBonusAdded = false;
 	private boolean ZzzzTimePenaltyAdded = false;
@@ -109,20 +110,20 @@ public class GameScreen implements Screen {
 		viewport = new FitViewport(MAP_WIDTH, MAP_HEIGHT, camera);
 
 		batch = new SpriteBatch();
-		player = new Player(145, 70, username);
+		player = new Player(145, 70, username, false);
 		locker = new Locker(495, 575);
-		dean = new Dean(90, 450, player, this);
+		dean = new Dean(90, 450, player, this, false);
 		friend = new NPC(560, 300, "NPC.png", "Hey " + player.getUsername()
-				+ "!\nDon't forget your bus ticket...\nIt must've flown out your window again.");
-		sign = new NPC(175, 200, "signpost.png", "North - Bus stop (exit)\nEast - Campus");
+				+ ",\nLooking for your bus ticket?\nWant to know where I last saw it?", true);
+		sign = new NPC(175, 200, "signpost.png", "North - Bus stop (exit)\nEast - Campus", true);
 
 		survey = new NPC(560, 370, "NPC.png", "Hey!\nCan I get a moment of your" +
-				"\ntime to take a quick survey.");
-		clock = new Item(50, 40, "Clock.png");
-		Zzzz = new Item(265, 560, "Clock.png");
+				"\ntime to take a quick survey?", false);
+		clock = new Item(50, 40, "Clock.png", false);
+		Zzzz = new Item(265, 560, "Clock.png", false);
 
 		// Add Key and barrier near spawn
-		key = new Key(470, 435);
+		key = new Key(470, 435, false);
 		barrier = new Barrier(95, 450);
 
 		font = new BitmapFont();
@@ -189,18 +190,34 @@ public class GameScreen implements Screen {
 
 			return; // Skip the rest of the game logic
 		}
+
+		/**
+		 * NEW NPC changes:
+		 * Updates "Friend" NPC speech based on conversation count.
+		 * activates maths mini-game on 3rd interaction with the friend npc.
+		 */
 		// Updates NPC speech
-		if (friend.manyTalks() && !friendSpeechUpdated) {
-			String newSpeech = ("Hey " + player.getUsername()
-					+ "!\nI don't know anything else...\nStop asking me.");
+		if (friend.manyTalks() > 1 && friend.manyTalks() > friendSpeechCount) {
+			String name = player.getUsername();
+			name = name.substring(0, 1).toUpperCase() + name.substring(1);
+			String newSpeech = ("Best of luck!");
+			if (friend.manyTalks() == 2) {
+				newSpeech = ("Complete your homework & I'll tell you! \n Press E to begin.");
+			} else if (friend.manyTalks() == 3) {
+				game.setScreen(new EquationScreen(game, this, new Runnable() {
+					@Override
+					public void run() {
+						friend.setSpeech("Try checking in the forest\n near your dorm room...");
+						incrementHiddenEvents();
+					}
+				}));
+			}
 			friend.setSpeech(newSpeech);
-			incrementHiddenEvents();
-			friendSpeechUpdated = true;
+			friendSpeechCount = friend.manyTalks();
 		}
 
 		// Decreases time if talked to survey NPC
 		if (survey.isTalked() && !surveyTimePenaltyAdded) {
-			incrementNegativeEvents();
 			gameTimer.decrementTimer(15f);
 			surveyTimePenaltyAdded = true;
 		}
@@ -266,6 +283,10 @@ public class GameScreen implements Screen {
 		}
 		// If you haven't collected the key and are within range, open the equation
 		// screen
+		/**
+		 * NEW homework minigame called when trying to pickup the key
+		 *
+		 */
 		if (!key.isCollected() && player.getPosition().dst(key.getPosition()) <= 16) {
 			if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
 				game.setScreen(new EquationScreen(game, this, new Runnable() {
@@ -278,6 +299,10 @@ public class GameScreen implements Screen {
 		}
 
 		// If you are near the locked barrier and have the key -> unlock it
+		/**
+		 * NEW Barrier event:
+		 * Checks collision with the "Professor" barrier. Can be unlocked with the key.
+		 */
 		if (barrier.isLocked() && key.isCollected() && !key.isUsed()
 				&& player.getPosition().dst(barrier.getPosition()) < 32) {
 			if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
@@ -298,7 +323,7 @@ public class GameScreen implements Screen {
 		// switch to screen coordinates for the UI elements
 		batch.setProjectionMatrix(uiStage.getCamera().combined);
 		// pls refactor NOW
-		font.draw(batch, "Positive Events Encountered = " + (positiveEvents) + "/3", 35, 630);
+		font.draw(batch, "Positive Events Encountered = " + (positiveEvents) + "/4", 35, 630);
 		font.draw(batch, "Negative Events Encountered = " + (negativeEvents) + "/5", 35, 610);
 		font.draw(batch, "Hidden Event Encountered = " + (hiddenEvents) + "/3", 35, 590);
 
@@ -441,7 +466,8 @@ public class GameScreen implements Screen {
 				achLog[0] = 1;
 			}
 			// send the player to the win screen
-			game.setScreen(new WinScreen(game, finalScore, timeRemaining, timesCaught, player.getUsername(), achLog, false));
+			game.setScreen(
+					new WinScreen(game, finalScore, timeRemaining, timesCaught, player.getUsername(), achLog, false));
 		}
 
 		if (!isCellBlocked(newX, newY)) {
@@ -535,6 +561,9 @@ public class GameScreen implements Screen {
 		positiveEvents++;
 	}
 
+	/**
+	 * NEW static method to increment negative events from other classes.
+	 */
 	public static void incrementNegativeEvents() {
 		negativeEvents++;
 	}

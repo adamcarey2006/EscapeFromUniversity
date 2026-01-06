@@ -35,6 +35,10 @@ public class MenuScreen implements Screen {
 	private FitViewport viewport;
 	private int[] achLog;
 
+	/**
+	 * Stage & Skin for the UI elements (TextField).
+	 * New feature: Username.
+	 */
 	private Stage stage;
 	private Skin skin;
 	private TextField usernameField;
@@ -106,6 +110,10 @@ public class MenuScreen implements Screen {
 		java.util.List<java.util.Map.Entry<String, Integer>> leaderboard = game.getLeaderboard();
 		if (leaderboard != null) {
 			int y = 170;
+			/**
+			 * NEW feature - Leaderboard Rendering:
+			 * Iterates through top 5 scores from MyGame to display score and name
+			 */
 			for (int i = 0; i < Math.min(leaderboard.size(), 5); i++) { // Only 5 rows are displayed
 				java.util.Map.Entry<String, Integer> entry = leaderboard.get(i);
 				font.draw(batch, (i + 1) + ". " + entry.getKey() + ": " + entry.getValue(), 380, y);// Seperates

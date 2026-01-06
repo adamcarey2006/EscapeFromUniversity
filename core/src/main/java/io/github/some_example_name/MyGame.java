@@ -19,6 +19,9 @@ import java.util.AbstractMap;
 //leaderboard class
 public class MyGame extends Game {
 
+	/**
+	 * NEW feature: leaderboard
+	 */
 	private List<Map.Entry<String, Integer>> leaderboard;// leaderboard represented by list
 	private String username = "";
 
@@ -39,7 +42,7 @@ public class MyGame extends Game {
 	}
 
 	/**
-	 * Add a score to the leaderboard & sort.
+	 * Method to add score to leaderboard, scores sorted descending order.
 	 */
 	public void addScore(String username, int score) {
 		leaderboard.add(new AbstractMap.SimpleEntry<>(username, score));
