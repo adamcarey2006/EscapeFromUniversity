@@ -17,6 +17,7 @@ public class Dean {
 	private Player player;
 	private GameScreen gameScreen;
 	private float speed = 0.7f;
+    private boolean headless = false;
 
 	/**
 	 * Constructor for <code> Dean </code>, with a set of coordinates.
@@ -28,13 +29,23 @@ public class Dean {
 	public Dean(float x, float y, Player player, GameScreen gameScreen, boolean headless){
 		this.position = new Vector2(x, y);
 		this.startPosition = new Vector2(x,y); //store the starting position of the dean
-        if (!headless) {
-            this.texture = new Texture("Dean-front.png");
-        }
 		this.player = player;
 		this.gameScreen = gameScreen;
 		this.velocity = new Vector2();
+        this.headless = headless;
+
+        if (!headless){
+            this.texture = new Texture("Dean-front.png");
+        }
 	}
+    //For testing since having a gamescreen seems to crash headless
+    public Dean(float x, float y, Player player, boolean headless){
+        this.position = new Vector2(x, y);
+        this.startPosition = new Vector2(x,y); //store the starting position of the dean
+        this.player = player;
+        this.velocity = new Vector2();
+        this.headless = headless;
+    }
 
 	/**
 	 * Update position of dean to get closer to player's new position.
@@ -47,11 +58,13 @@ public class Dean {
 		float newX = position.x + direction.x * speed;
 		float newY = position.y + direction.y * speed;
 
-		if(!gameScreen.isCellBlocked(newX, newY)) {
+		if(headless || !gameScreen.isCellBlocked(newX, newY)) {
 		    position.set(newX, newY);
 		}
 
-		tryMoveDiagonally(delta, direction);
+        if (!headless) {
+            tryMoveDiagonally(delta, direction);
+        }
 	}
 
 	/**
@@ -95,7 +108,8 @@ public class Dean {
 	 * @see com.badlogic.gdx.Screen#render Screen.render().
 	 */
 	public void render(SpriteBatch batch) {
-		batch.draw(texture, position.x, position.y, 16, 16);
+		if (headless) return;
+        batch.draw(texture, position.x, position.y, 16, 16);
 	}
 
 	/**
@@ -116,6 +130,8 @@ public class Dean {
 	  @see com.badlogic.gdx.Screen#dispose Screen.dispose().
 	 */
 	public void dispose() {
-		texture.dispose();
+		if (!headless && texture!=null) {
+            texture.dispose();
+        }
 	}
 }

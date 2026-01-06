@@ -46,6 +46,7 @@ public class Player {
 	public Player(float x, float y, String username, boolean headless) {
 		this.username = username;
 		position = new Vector2(x, y);
+
         if (!headless) {
             frontTexture = new Texture("Player-front.png");
             backTexture = new Texture("Player-back.png");
@@ -58,6 +59,9 @@ public class Player {
             currentFrame = frontFrame;
         }
 	}
+
+
+
 
 	/**
 	 * Get the player's username.
@@ -75,6 +79,9 @@ public class Player {
 	 * @see Direction Direction.
 	 */
 	public void setDirection(Direction newDirection) {
+        //For automated testing, skips the rendering
+        if (frontFrame==null) return;
+
 		switch (newDirection) {
 			case UP:
 				currentFrame = backFrame;
@@ -107,6 +114,7 @@ public class Player {
 	 * @see com.badlogic.gdx.Screen#render Screen.render().
 	 */
 	public void render(SpriteBatch batch) {
+        if (currentFrame==null) return;
 		batch.draw(currentFrame, position.x, position.y);
 	}
 
