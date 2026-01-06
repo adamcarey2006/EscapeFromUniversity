@@ -119,11 +119,11 @@ public class GameScreen implements Screen {
 
 		survey = new NPC(560, 370, "NPC.png", "Hey!\nCan I get a moment of your" +
 				"\ntime to take a quick survey?", false);
-		clock = new Item(50, 40, "Clock.png");
-		Zzzz = new Item(265, 560, "Clock.png");
+		clock = new Item(50, 40, "Clock.png", false);
+		Zzzz = new Item(265, 560, "Clock.png", false);
 
 		// Add Key and barrier near spawn
-		key = new Key(470, 435);
+		key = new Key(470, 435, false);
 		barrier = new Barrier(95, 450);
 
 		font = new BitmapFont();

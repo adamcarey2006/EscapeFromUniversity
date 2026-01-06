@@ -23,9 +23,11 @@ public class Item {
      * @param y Vertical position in world for item sprite.
      * @param sprite String value containing sprites file name.
      */
-    public Item(float x, float y, String sprite) {
+    public Item(float x, float y, String sprite, boolean headless) {
         this.position = new Vector2(x, y);
-        this.texture = new Texture(sprite);
+        if (!headless) {
+            this.texture = new Texture(sprite);
+        }
         this.isCollected = false;
     }
 
@@ -48,6 +50,7 @@ public class Item {
      * @see com.badlogic.gdx.graphics.g2d.SpriteBatch SpriteBatch.
      */
     public void render(SpriteBatch batch) {
+        if (batch == null) {return;}
         if (!isCollected) {
             batch.draw(texture, position.x, position.y, 11, 11);
         }

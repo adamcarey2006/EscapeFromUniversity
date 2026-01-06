@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+//Test ID 1
 public class DeanTest {
 
     private Dean dean;
@@ -24,14 +25,14 @@ public class DeanTest {
         achLog = new int[5];
         winScreen = new WinScreen(testGame, 450, 120, 0, "DAN", achLog, true);
     }
-
+    //1.1
     @Test
     public void deanSpawnPosition(){
         Vector2 currentPos = dean.getPosition();
         assertEquals(90f, currentPos.x, 0.001f);
         assertEquals(450f, currentPos.y, 0.001f);
     }
-
+    //1.2
     @Test
     public void testDeanMovesTowardPlayer() {
         Vector2 before = new Vector2(dean.getPosition());
@@ -43,7 +44,7 @@ public class DeanTest {
         assertTrue(after.dst(player.getPosition()) <
             before.dst(player.getPosition()));
     }
-
+    //1.3
     @Test
     public void testResetToStartEvenCatch() {
         dean.resetToStart(2); // even
@@ -52,7 +53,7 @@ public class DeanTest {
         assertEquals(90f, pos.x, 0.01f);
         assertEquals(450f, pos.y, 0.01f);
     }
-
+    //1.4
     @Test
     public void testResetToStartOddCatch() {
         dean.resetToStart(1); // odd
@@ -61,7 +62,7 @@ public class DeanTest {
         assertEquals(390f, pos.x, 0.01f);
         assertEquals(400f, pos.y, 0.01f);
     }
-
+    //1.5
     @Test
     public void avoidDeanAchievement() {
         assertTrue(achLog[0] == 0);
