@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-
+//3
 public class WinScreenTest {
 
     private WinScreen winScreen;
@@ -17,17 +17,17 @@ public class WinScreenTest {
         achLog = new int[5];
         winScreen = new WinScreen(testGame, 450, 120, 2, "DAN", achLog, true);
     }
-
+    //3.1
     @Test
     public void finalScoreTest(){
         assertEquals(450, winScreen.finalScore);
     }
-
+    //3.2
     @Test
     public void achievementFlagTest(){
         assertEquals(1, achLog[1]);
     }
-
+    //3.3
     @Test
     public void noAchievementFlagTest(){
         int[] tmpAchLog = new int[5];
