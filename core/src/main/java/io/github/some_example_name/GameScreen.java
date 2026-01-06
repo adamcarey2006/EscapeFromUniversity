@@ -114,17 +114,17 @@ public class GameScreen implements Screen {
 		locker = new Locker(495, 575);
 		dean = new Dean(90, 450, player, this, false);
 		friend = new NPC(560, 300, "NPC.png", "Hey " + player.getUsername()
-				+ ",\nLooking for your bus ticket?\nWant to know where I last saw it?", true);
-		sign = new NPC(175, 200, "signpost.png", "North - Bus stop (exit)\nEast - Campus", true);
+				+ ",\nLooking for your bus ticket?\nWant to know where I last saw it?", true, false);
+		sign = new NPC(175, 200, "signpost.png", "North - Bus stop (exit)\nEast - Campus", true, false);
 
 		survey = new NPC(560, 370, "NPC.png", "Hey!\nCan I get a moment of your" +
-				"\ntime to take a quick survey?", false);
-		clock = new Item(50, 40, "Clock.png");
-		Zzzz = new Item(265, 560, "Clock.png");
+				"\ntime to take a quick survey?", false, false);
+		clock = new Item(50, 40, "Clock.png", false);
+		Zzzz = new Item(265, 560, "Clock.png", false);
 
 		// Add Key and barrier near spawn
-		key = new Key(470, 435);
-		barrier = new Barrier(95, 450);
+		key = new Key(470, 435, false);
+		barrier = new Barrier(95, 450, false);
 
 		font = new BitmapFont();
 
@@ -133,7 +133,7 @@ public class GameScreen implements Screen {
 		MapObject ticketObject = eventObjects.get("BusTicket");
 		if (ticketObject != null && ticketObject instanceof RectangleMapObject) {
 			RectangleMapObject rect = (RectangleMapObject) ticketObject;
-			busTicket = new BusTicket(rect.getRectangle().x, rect.getRectangle().y);
+			busTicket = new BusTicket(rect.getRectangle().x, rect.getRectangle().y, false);
 		}
 
 		MapObject busObject = eventObjects.get("Bus");
@@ -238,9 +238,9 @@ public class GameScreen implements Screen {
 			Zzzz.render(batch);
 		}
 
-		friend.update(player);
-		sign.update(player);
-		survey.update(player);
+		friend.update(player, false);
+		sign.update(player, false);
+		survey.update(player, false);
 		clock.update(player);
 		Zzzz.update(player);
 		dean.update(delta);

@@ -20,24 +20,28 @@ public class BusTicket {
 	 * Constructor for <code> BusTicket </code>, spawning the ticket sprite
 	 * in the given world coordinates.Uses "bus-ticket.png" in
 	 * <code> assets/ </code> folder for sprite.
-	 * 
+	 *
 	 * @param x Horizontal position in world for ticket sprite.
 	 * @param y Vertical position in world for ticket sprite.
 	 */
-	public BusTicket(float x, float y) {
+	public BusTicket(float x, float y, boolean headless) {
 		this.position = new Vector2(x, y);
-		this.texture = new Texture("bus-ticket.png");
+        if (!headless)
+        {
+            this.texture = new Texture("bus-ticket.png");
+        }
 		this.isCollected = false;
 		this.isDiscovered = false;
 	}
 
 	/**
 	 * Render ticket sprite within given sprite batch.
-	 * 
+	 *
 	 * @param batch SpriteBatch to render world sprite in.
 	 * @see com.badlogic.gdx.graphics.g2d.SpriteBatch SpriteBatch.
 	 */
 	public void render(SpriteBatch batch) {
+        if (batch == null) {return;}
 		if (isDiscovered && !isCollected) {
 			batch.draw(texture, position.x, position.y, 16, 16);
 		}
@@ -46,14 +50,15 @@ public class BusTicket {
 	/**
 	 * Render ticket collected UI element, to signify the ticket is in user
 	 * inventory.
-	 * 
+	 *
 	 * @param batch  SpriteBatch to render UI sprite in.
 	 * @param camera Camera connected to batch.
 	 * @see com.badlogic.gdx.graphics.g2d.SpriteBatch SpriteBatch.
 	 * @see com.badlogic.gdx.graphics.OrthographicCamera OrthographicCamera
 	 */
 	public void renderAsIcon(SpriteBatch batch, OrthographicCamera camera) {
-		if (isCollected) {
+		if (batch == null) {return;}
+        if (isCollected) {
 			float iconSize = 32f;
 			float padding = 20f;
 
@@ -72,7 +77,7 @@ public class BusTicket {
 
 	/**
 	 * Return ticket position as a 2D Vector.
-	 * 
+	 *
 	 * @return 2D Vector with x/y positions of ticket.
 	 */
 	public Vector2 getPosition() {
@@ -81,7 +86,7 @@ public class BusTicket {
 
 	/**
 	 * Return if the ticket has been collected by player or not.
-	 * 
+	 *
 	 * @return True/False value corrosponding to if ticket is collected.
 	 */
 	public boolean isCollected() {

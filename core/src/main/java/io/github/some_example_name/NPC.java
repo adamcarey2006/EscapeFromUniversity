@@ -29,11 +29,13 @@ public class NPC {
 	 * @param x Horizontal position for NPC to spawn in.
 	 * @param y Vertical position for NPC to spawn in.
 	 */
-	public NPC(float x, float y, String sprite, String Speech, boolean isFriendly) {
-		texture = new Texture(sprite);
+	public NPC(float x, float y, String sprite, String Speech, boolean isFriendly, boolean headless) {
+		if (!headless) {
+            texture = new Texture(sprite);
+            bounds = new Rectangle(x, y, texture.getWidth(), texture.getHeight());
+            font = new BitmapFont();
+        }
 		position = new Vector2(x, y);
-		bounds = new Rectangle(x, y, texture.getWidth(), texture.getHeight());
-		font = new BitmapFont();
 		speech = Speech;
 		this.isFriendly = isFriendly;
 	}
@@ -44,26 +46,43 @@ public class NPC {
 	 *
 	 * @param player Player object.
 	 */
-	public void update(Player player) {
-		if (player.getPosition().dst(position) < 30f &&
-				Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-			showMessage = true;
-			this.talked = true;
-			this.numTalked += 1;
-			if (this.numTalked == 1) {
-				if (this.isFriendly) {
-					GameScreen.incrementPositiveEvents();
-				} else if (!this.isFriendly) {
-					GameScreen.incrementNegativeEvents();
-				}
-			}
+	public void update(Player player, boolean headless) {
+        if (!headless) {
+            if (player.getPosition().dst(position) < 30f &&
+                Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                showMessage = true;
+                this.talked = true;
+                this.numTalked += 1;
+                if (this.numTalked == 1) {
+                    if (this.isFriendly) {
+                        GameScreen.incrementPositiveEvents();
+                    } else if (!this.isFriendly) {
+                        GameScreen.incrementNegativeEvents();
+                    }
+                }
 
-		}
+            }
+        }
+        if (headless) {
+            if (player.getPosition().dst(position) < 30f) {
+                showMessage = true;
+                this.talked = true;
+                this.numTalked += 1;
+                if (this.numTalked == 1) {
+                    if (this.isFriendly) {
+                        GameScreen.incrementPositiveEvents();
+                    } else if (!this.isFriendly) {
+                        GameScreen.incrementNegativeEvents();
+                    }
+                }
 
-		if (showMessage && player.getPosition().dst(position) > 60f) {
-			showMessage = false;
-		}
-	}
+
+                if (showMessage && player.getPosition().dst(position) > 60f) {
+                    showMessage = false;
+                }
+            }
+        }
+        }
 
 	/**
 	 * Draws the NPC's sprite and its dialog using a SpriteBatch at the current
@@ -72,6 +91,7 @@ public class NPC {
 	 * @param batch SpriteBatch used by application to render all sprites.
 	 */
 	public void render(SpriteBatch batch) {
+        if (texture == null) {return;}
 		batch.draw(texture, position.x, position.y);
 		if (showMessage) {
 			font.draw(

@@ -36,4 +36,18 @@ public class PosEventTest {
        testClock.update(testPlayer);
        assertTrue(testClock.isCollected());
     }
+
+    @Test
+    public void friendTest() {
+        NPC friend = new NPC(145, 80, "NPC.png", "Hey " + testPlayer.getUsername()
+            + ",\nLooking for your bus ticket?\nWant to know where I last saw it?", true, true);
+        friend.update(testPlayer, true);
+        assertTrue(friend.isTalked());
+
+        NPC farFriend = new NPC(560, 300, "NPC.png", "Hey " + testPlayer.getUsername()
+            + ",\nLooking for your bus ticket?\nWant to know where I last saw it?", true, true);
+        farFriend.update(testPlayer, true);
+        assertFalse(farFriend.isTalked());
+
+    }
 }

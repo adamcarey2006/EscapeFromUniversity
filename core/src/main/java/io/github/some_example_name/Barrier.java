@@ -24,19 +24,22 @@ public class Barrier {
 
     /**
      * <code> Barrier </code> constructor.
-     * 
+     *
      * @param x Position X
      * @param y Position Y
      */
-    public Barrier(float x, float y) {
+    public Barrier(float x, float y, boolean headless) {
         this.position = new Vector2(x, y);
-        this.texture = new Texture("Dean-front.png");
+        if (!headless) {
+            this.texture = new Texture("Dean-front.png");
+            this.font = new BitmapFont();
+        }
         this.isLocked = true;
         this.bounds = new Rectangle(x, y, 16, 16); // barrier size
-        this.font = new BitmapFont();
     }
 
     public void render(SpriteBatch batch) {
+        if(batch == null) {return;}
         if (isLocked) {
             batch.draw(texture, position.x, position.y, 16, 16);
             if (showMessage) {
@@ -52,7 +55,7 @@ public class Barrier {
 
     /**
      * Show messages if barrier is locked.
-     * 
+     *
      * @param delta Time.
      */
     public void update(float delta) {
