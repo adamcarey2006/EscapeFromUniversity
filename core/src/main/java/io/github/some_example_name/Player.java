@@ -33,6 +33,7 @@ public class Player {
 	private TextureRegion backFrame;
 	private TextureRegion sideFrame;
 	private TextureRegion currentFrame;
+	/** NEW - used for leaderboard. */
 	private String username;
 
 	/**
@@ -57,6 +58,11 @@ public class Player {
 		currentFrame = frontFrame;
 	}
 
+	/**
+	 * Get the player's username.
+	 * 
+	 * @return username.
+	 */
 	public String getUsername() {
 		return username;
 	}

@@ -19,8 +19,9 @@ public class NPC {
 	private BitmapFont font;
 	private boolean showMessage = false;
 	private String speech;
-    private boolean talked = false;
-    private int numTalked = 0;
+	private boolean talked = false;
+	private int numTalked = 0;
+	private boolean isFriendly;
 
 	/**
 	 * Constructor for <code> NPC </code>, with a set of coordinates.
@@ -28,12 +29,13 @@ public class NPC {
 	 * @param x Horizontal position for NPC to spawn in.
 	 * @param y Vertical position for NPC to spawn in.
 	 */
-	public NPC(float x, float y, String sprite, String Speech) {
+	public NPC(float x, float y, String sprite, String Speech, boolean isFriendly) {
 		texture = new Texture(sprite);
 		position = new Vector2(x, y);
 		bounds = new Rectangle(x, y, texture.getWidth(), texture.getHeight());
 		font = new BitmapFont();
 		speech = Speech;
+		this.isFriendly = isFriendly;
 	}
 
 	/**
@@ -46,12 +48,16 @@ public class NPC {
 		if (player.getPosition().dst(position) < 30f &&
 				Gdx.input.isKeyJustPressed(Input.Keys.E)) {
 			showMessage = true;
-            talked = true;
-            if (this.numTalked == 0 && this.speech != ("Hey!\nCan I get a moment of your" +
-                "\ntime to take a quick survey.")) {
-                GameScreen.incrementPositiveEvents();
-            }
-            numTalked += 1;
+			this.talked = true;
+			this.numTalked += 1;
+			if (this.numTalked == 1) {
+				if (this.isFriendly) {
+					GameScreen.incrementPositiveEvents();
+				} else if (!this.isFriendly) {
+					GameScreen.incrementNegativeEvents();
+				}
+			}
+
 		}
 
 		if (showMessage && player.getPosition().dst(position) > 60f) {
@@ -101,30 +107,30 @@ public class NPC {
 		return bounds;
 	}
 
-    /**
-     * Get NPC's talked status.
-     *
-     * @return boolean status.
-     */
-    public boolean isTalked() {
-        return (talked);
-    }
+	/**
+	 * Get NPC's talked status.
+	 *
+	 * @return boolean status.
+	 */
+	public boolean isTalked() {
+		return (talked);
+	}
 
-    /**
-     * Get NPC's times talked.
-     *
-     * @return boolean if number over 3.
-     */
-    public boolean manyTalks() {
-        return (numTalked > 3);
-    }
+	/**
+	 * Get NPC's times talked.
+	 *
+	 * @return int of number of times talked.
+	 */
+	public int manyTalks() {
+		return (numTalked);
+	}
 
-    /**
-     * Get new speech input.
-     *
-     * @param nSpeech String used by application to change speech.
-     */
-    public void setSpeech(String nSpeech) {
-        speech = nSpeech;
-    }
+	/**
+	 * Get new speech input.
+	 *
+	 * @param nSpeech String used by application to change speech.
+	 */
+	public void setSpeech(String nSpeech) {
+		speech = nSpeech;
+	}
 }

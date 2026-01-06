@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 /**
- * Key is used to bypass barrier events.
+ * NEW feature: Item to be picked up which lets you past a barrier!
  */
 public class Key {
     private Vector2 position;

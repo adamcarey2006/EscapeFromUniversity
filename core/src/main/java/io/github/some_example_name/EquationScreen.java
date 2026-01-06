@@ -16,6 +16,7 @@ import java.util.Random;
 
 /**
  * Display math equation and check answer. Mostly reused from GameScreen.
+ * New feature: "Homework" mini-game. Must be solved to proceed!
  */
 public class EquationScreen implements Screen {
     private final MyGame game;
