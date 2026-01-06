@@ -17,14 +17,14 @@ public class NegEventTest {
     {
         testPlayer = new Player(145f, 70f, "TestPlayer", true);
     }
-
+    //6.1
     @Test
     public void sleepTest() {
         Item testSleep = new Item(145f, 70f, "Zzz", true);
         testSleep.update(testPlayer);
         assertTrue(testSleep.isCollected());
     }
-
+    //6.2
     @Test
     public void surveyTest() {
         NPC survey = new NPC(145f, 80f, "NPC.png", "Hey!\nCan I get a moment of your" +
@@ -37,7 +37,7 @@ public class NegEventTest {
         farSurvey.update(testPlayer, true);
         assertFalse(farSurvey.isTalked());
     }
-
+    //6.3
     @Test
     public void barrierTest() {
         Key key = new Key(145, 70, true);

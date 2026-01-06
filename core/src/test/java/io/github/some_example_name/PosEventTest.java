@@ -15,6 +15,7 @@ public class PosEventTest {
         testPlayer = new Player(145f, 70f, "TestPlayer", true);
     }
 
+    //5.1
     @Test
     public void keyTest(){
         Key key = new Key(145, 70, true);
@@ -29,7 +30,7 @@ public class PosEventTest {
         }
         assertFalse(farKey.isCollected());
     }
-
+    //5.2
     @Test
     public void clockTest(){
        Item testClock = new Item(145f, 70f, "TestClock", true);
@@ -37,6 +38,7 @@ public class PosEventTest {
        assertTrue(testClock.isCollected());
     }
 
+    //5.3
     @Test
     public void friendTest() {
         NPC friend = new NPC(145, 80, "NPC.png", "Hey " + testPlayer.getUsername()

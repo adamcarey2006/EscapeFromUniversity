@@ -15,6 +15,7 @@ public class HidEventTest {
         testPlayer = new Player(145f, 70f, "TestPlayer", true);
     }
 
+    //7.1
     @Test
     public void ticketTest(){
 
@@ -38,11 +39,6 @@ public class HidEventTest {
             }
         }
         assertFalse(farTicket.isCollected());
-    }
-
-    @Test
-    public void sugarTest() {
-
     }
 
 }
