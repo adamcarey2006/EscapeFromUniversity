@@ -21,7 +21,7 @@ public class WinScreen implements Screen {
 	private BitmapFont font;
 
 	// scoring system variables
-    int finalScore;
+	int finalScore;
 	private int timeRemaining;
 	private int timesCaught;
 	private String username;
@@ -37,7 +37,8 @@ public class WinScreen implements Screen {
 	 * @param timesCaught   Number of times the player is caught by the dean
 	 * @param username      The player's username
 	 */
-	public WinScreen(MyGame game, int finalScore, int timeRemaining, int timesCaught, String username, int[] achLog, boolean headless) {
+	public WinScreen(MyGame game, int finalScore, int timeRemaining, int timesCaught, String username, int[] achLog,
+			boolean headless) {
 		this.game = game;
 		this.finalScore = finalScore;
 		this.timeRemaining = timeRemaining;
@@ -45,18 +46,18 @@ public class WinScreen implements Screen {
 		this.username = username;
 		this.achLog = achLog;
 
-        if (finalScore >= 400) {
-            achLog[1] = 1;
-        }
+		if (finalScore >= 400) {
+			achLog[1] = 1;
+		}
 
-        if (!headless) {
-            camera = new OrthographicCamera();
-            camera.setToOrtho(false, 640, 480);
+		if (!headless) {
+			camera = new OrthographicCamera();
+			camera.setToOrtho(false, 640, 480);
 
-            batch = new SpriteBatch();
-            font = new BitmapFont();
-            font.getData().setScale(2.5f);
-        }
+			batch = new SpriteBatch();
+			font = new BitmapFont();
+			font.getData().setScale(2.5f);
+		}
 
 	}
 
@@ -68,21 +69,22 @@ public class WinScreen implements Screen {
 	 */
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(0.1f, 0.3f, 0.1f, 1); // A nice green color
+		Gdx.gl.glClearColor(0.1f, 0.3f, 0.1f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
 
 		batch.begin();
-		font.draw(batch, "You Win!", 250, 350);
+		font.draw(batch, "Victory!", 250, 350);
 		font.draw(batch, "Final Score = " + finalScore, 188, 310);
-		font.draw(batch, "Dean Penalty = " + timesCaught * 5, 188, 270);
+		font.draw(batch, "Times caught by the dean = " + timesCaught, 188, 270);
 		font.draw(batch, "Press SPACE to return to menu", 100, 150);
-		font.draw(batch, "Press ESC to quit", 100, 130);
+		font.draw(batch, "Press ESC to quit", 100, 100);
 		batch.end();
 
 		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+			// NEW -Submit score to leaderboard before returning to menu
 			game.addScore(username, finalScore);
 			game.setScreen(new MenuScreen(game, achLog));
 		}

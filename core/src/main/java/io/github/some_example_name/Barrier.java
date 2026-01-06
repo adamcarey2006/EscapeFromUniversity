@@ -8,7 +8,8 @@ import com.badlogic.gdx.math.Vector2;
 
 /**
  * <code> Barrier </code> Negative event that blocks the player - destroyed with
- * key
+ * key.
+ * NEW : Professor blocking path negative event logic.
  */
 public class Barrier {
     private boolean showMessage = false;
@@ -43,7 +44,7 @@ public class Barrier {
                     firstTime = false;
                     GameScreen.incrementNegativeEvents();
                 }
-                font.draw(batch, "Halt. You'll need a doctor's note\nif you'd like to be excused.", position.x - 20,
+                font.draw(batch, "Halt. You'll need a doctor's\nnote to be excused early.", position.x - 40,
                         position.y + 50);
             }
         }
