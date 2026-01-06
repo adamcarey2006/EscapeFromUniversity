@@ -15,23 +15,26 @@ public class Key {
 
     /**
      * Constructor, creates key at position.
-     * 
+     *
      * @param x X position
      * @param y Y position
      */
-    public Key(float x, float y) {
+    public Key(float x, float y, boolean headless) {
         this.position = new Vector2(x, y);
-        this.texture = new Texture("key.png");
+        if (!headless) {
+            this.texture = new Texture("key.png");
+        }
         this.pickedUp = false;
         this.used = false;
     }
 
     /**
      * Render sprite in, if not picked up.
-     * 
+     *
      * @param batch Render sprite.
      */
     public void render(SpriteBatch batch) {
+        if (batch == null) { return;}
         if (!pickedUp) {
             batch.draw(texture, position.x, position.y, 16, 16);
         }
@@ -39,12 +42,13 @@ public class Key {
 
     /**
      * Render key png on the GUI
-     * 
+     *
      * @param batch Render sprite.
      * @param x     X position
      * @param y     Y position
      */
     public void renderUI(SpriteBatch batch, float x, float y) {
+        if (batch == null) { return;}
         if (pickedUp && !used) {
             batch.draw(texture, x, y, 32, 32);
         }
