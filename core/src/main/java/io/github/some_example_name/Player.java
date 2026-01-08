@@ -43,25 +43,22 @@ public class Player {
 	 * @param y        Vertical position for player to spawn in.
 	 * @param username Players username.
 	 */
-	public Player(float x, float y, String username, boolean headless) {
+	public Player(float x, float y, String username) {
 		this.username = username;
 		position = new Vector2(x, y);
 
-        if (!headless) {
-            frontTexture = new Texture("Player-front.png");
-            backTexture = new Texture("Player-back.png");
-            sideTexture = new Texture("Player-side.png");
+		if (com.badlogic.gdx.Gdx.app.getType() != com.badlogic.gdx.Application.ApplicationType.HeadlessDesktop) {
+			frontTexture = new Texture("Player-front.png");
+			backTexture = new Texture("Player-back.png");
+			sideTexture = new Texture("Player-side.png");
 
-            frontFrame = new TextureRegion(frontTexture);
-            backFrame = new TextureRegion(backTexture);
-            sideFrame = new TextureRegion(sideTexture);
+			frontFrame = new TextureRegion(frontTexture);
+			backFrame = new TextureRegion(backTexture);
+			sideFrame = new TextureRegion(sideTexture);
 
-            currentFrame = frontFrame;
-        }
+			currentFrame = frontFrame;
+		}
 	}
-
-
-
 
 	/**
 	 * Get the player's username.
@@ -79,8 +76,9 @@ public class Player {
 	 * @see Direction Direction.
 	 */
 	public void setDirection(Direction newDirection) {
-        //For automated testing, skips the rendering
-        if (frontFrame==null) return;
+		// For automated testing, skips the rendering
+		if (frontFrame == null)
+			return;
 
 		switch (newDirection) {
 			case UP:
@@ -114,7 +112,8 @@ public class Player {
 	 * @see com.badlogic.gdx.Screen#render Screen.render().
 	 */
 	public void render(SpriteBatch batch) {
-        if (currentFrame==null) return;
+		if (currentFrame == null)
+			return;
 		batch.draw(currentFrame, position.x, position.y);
 	}
 
@@ -133,8 +132,11 @@ public class Player {
 	 * @see com.badlogic.gdx.Screen#dispose Screen.dispose().
 	 */
 	public void dispose() {
-		frontTexture.dispose();
-		backTexture.dispose();
-		sideTexture.dispose();
+		if (frontTexture != null)
+			frontTexture.dispose();
+		if (backTexture != null)
+			backTexture.dispose();
+		if (sideTexture != null)
+			sideTexture.dispose();
 	}
 }

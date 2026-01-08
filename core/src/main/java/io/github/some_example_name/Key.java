@@ -19,9 +19,9 @@ public class Key {
      * @param x X position
      * @param y Y position
      */
-    public Key(float x, float y, boolean headless) {
+    public Key(float x, float y) {
         this.position = new Vector2(x, y);
-        if (!headless) {
+        if (com.badlogic.gdx.Gdx.app.getType() != com.badlogic.gdx.Application.ApplicationType.HeadlessDesktop) {
             this.texture = new Texture("key.png");
         }
         this.pickedUp = false;
@@ -34,7 +34,9 @@ public class Key {
      * @param batch Render sprite.
      */
     public void render(SpriteBatch batch) {
-        if (batch == null) { return;}
+        if (batch == null) {
+            return;
+        }
         if (!pickedUp) {
             batch.draw(texture, position.x, position.y, 16, 16);
         }
@@ -48,7 +50,9 @@ public class Key {
      * @param y     Y position
      */
     public void renderUI(SpriteBatch batch, float x, float y) {
-        if (batch == null) { return;}
+        if (batch == null) {
+            return;
+        }
         if (pickedUp && !used) {
             batch.draw(texture, x, y, 32, 32);
         }

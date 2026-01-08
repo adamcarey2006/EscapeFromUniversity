@@ -4,8 +4,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+
 //3
-public class WinScreenTest {
+public class WinScreenTest extends HeadlessTest {
 
     private WinScreen winScreen;
     private MyGame testGame;
@@ -17,19 +18,22 @@ public class WinScreenTest {
         achLog = new int[5];
         winScreen = new WinScreen(testGame, 450, 120, 2, "DAN", achLog, true);
     }
-    //3.1
+
+    // 3.1
     @Test
-    public void finalScoreTest(){
+    public void finalScoreTest() {
         assertEquals(450, winScreen.finalScore);
     }
-    //3.2
+
+    // 3.2
     @Test
-    public void achievementFlagTest(){
+    public void achievementFlagTest() {
         assertEquals(1, achLog[1]);
     }
-    //3.3
+
+    // 3.3
     @Test
-    public void noAchievementFlagTest(){
+    public void noAchievementFlagTest() {
         int[] tmpAchLog = new int[5];
         WinScreen tmpScreen = new WinScreen(testGame, 300, 120, 1, "BOB", tmpAchLog, true);
         assertEquals(0, tmpAchLog[1]);

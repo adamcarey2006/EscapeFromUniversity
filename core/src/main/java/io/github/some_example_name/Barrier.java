@@ -28,9 +28,9 @@ public class Barrier {
      * @param x Position X
      * @param y Position Y
      */
-    public Barrier(float x, float y, boolean headless) {
+    public Barrier(float x, float y) {
         this.position = new Vector2(x, y);
-        if (!headless) {
+        if (com.badlogic.gdx.Gdx.app.getType() != com.badlogic.gdx.Application.ApplicationType.HeadlessDesktop) {
             this.texture = new Texture("Dean-front.png");
             this.font = new BitmapFont();
         }
@@ -39,7 +39,9 @@ public class Barrier {
     }
 
     public void render(SpriteBatch batch) {
-        if(batch == null) {return;}
+        if (batch == null) {
+            return;
+        }
         if (isLocked) {
             batch.draw(texture, position.x, position.y, 16, 16);
             if (showMessage) {

@@ -110,9 +110,9 @@ public class GameScreen implements Screen {
 		viewport = new FitViewport(MAP_WIDTH, MAP_HEIGHT, camera);
 
 		batch = new SpriteBatch();
-		player = new Player(145, 70, username, false);
+		player = new Player(145, 70, username);
 		locker = new Locker(495, 575);
-		dean = new Dean(90, 450, player, this, false);
+		dean = new Dean(90, 450, player, this);
 		friend = new NPC(560, 300, "NPC.png", "Hey " + player.getUsername()
 				+ ",\nLooking for your bus ticket?\nWant to know where I last saw it?", true);
 		sign = new NPC(175, 200, "signpost.png", "North - Bus stop (exit)\nEast - Campus", true);
@@ -123,7 +123,7 @@ public class GameScreen implements Screen {
 		Zzzz = new Item(265, 560, "Clock.png", false);
 
 		// Add Key and barrier near spawn
-		key = new Key(470, 435, false);
+		key = new Key(470, 435);
 		barrier = new Barrier(95, 450);
 
 		font = new BitmapFont();

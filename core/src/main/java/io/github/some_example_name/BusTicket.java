@@ -24,12 +24,11 @@ public class BusTicket {
 	 * @param x Horizontal position in world for ticket sprite.
 	 * @param y Vertical position in world for ticket sprite.
 	 */
-	public BusTicket(float x, float y, boolean headless) {
+	public BusTicket(float x, float y) {
 		this.position = new Vector2(x, y);
-        if (!headless)
-        {
-            this.texture = new Texture("bus-ticket.png");
-        }
+		if (com.badlogic.gdx.Gdx.app.getType() != com.badlogic.gdx.Application.ApplicationType.HeadlessDesktop) {
+			this.texture = new Texture("bus-ticket.png");
+		}
 		this.isCollected = false;
 		this.isDiscovered = false;
 	}
@@ -41,7 +40,9 @@ public class BusTicket {
 	 * @see com.badlogic.gdx.graphics.g2d.SpriteBatch SpriteBatch.
 	 */
 	public void render(SpriteBatch batch) {
-        if (batch == null) {return;}
+		if (batch == null) {
+			return;
+		}
 		if (isDiscovered && !isCollected) {
 			batch.draw(texture, position.x, position.y, 16, 16);
 		}
@@ -57,8 +58,10 @@ public class BusTicket {
 	 * @see com.badlogic.gdx.graphics.OrthographicCamera OrthographicCamera
 	 */
 	public void renderAsIcon(SpriteBatch batch, OrthographicCamera camera) {
-		if (batch == null) {return;}
-        if (isCollected) {
+		if (batch == null) {
+			return;
+		}
+		if (isCollected) {
 			float iconSize = 32f;
 			float padding = 20f;
 
