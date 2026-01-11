@@ -297,6 +297,7 @@ public class GameScreen implements Screen {
 		 */
 		if (!key.isCollected() && player.getPosition().dst(key.getPosition()) <= 16) {
 			if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+				incrementNegativeEvents();
 				game.setScreen(new EquationScreen(game, this, new Runnable() {
 					@Override
 					public void run() {
@@ -331,7 +332,7 @@ public class GameScreen implements Screen {
 		// switch to screen coordinates for the UI elements
 		batch.setProjectionMatrix(uiStage.getCamera().combined);
 		// pls refactor NOW
-		font.draw(batch, "Positive Events Encountered = " + (positiveEvents) + "/4", 35, 630);
+		font.draw(batch, "Positive Events Encountered = " + (positiveEvents) + "/3", 35, 630);
 		font.draw(batch, "Negative Events Encountered = " + (negativeEvents) + "/5", 35, 610);
 		font.draw(batch, "Hidden Event Encountered = " + (hiddenEvents) + "/3", 35, 590);
 
