@@ -14,7 +14,7 @@ public class NegEventTest extends HeadlessTest {
 
     @Before
     public void setUp() {
-        testPlayer = new Player(145f, 70f, "TestPlayer");
+        testPlayer = new Player(145f, 70f, "TestPlayer", true);
     }
 
     // 6.1

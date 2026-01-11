@@ -115,7 +115,7 @@ public class GameScreen implements Screen {
 		viewport = new FitViewport(MAP_WIDTH, MAP_HEIGHT, camera);
 
 		batch = new SpriteBatch();
-		player = new Player(145, 70, username);
+		player = new Player(145, 70, username, false);
 		locker = new Locker(495, 575);
 		dean = new Dean(90, 450, player, this);
 		friend = new NPC(560, 300, "NPC.png", "Hey " + player.getUsername()

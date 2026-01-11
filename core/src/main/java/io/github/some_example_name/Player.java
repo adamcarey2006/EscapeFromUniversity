@@ -43,11 +43,11 @@ public class Player {
 	 * @param y        Vertical position for player to spawn in.
 	 * @param username Players username.
 	 */
-	public Player(float x, float y, String username) {
+	public Player(float x, float y, String username, boolean headless) {
 		this.username = username;
 		position = new Vector2(x, y);
 
-		if (com.badlogic.gdx.Gdx.app.getType() != com.badlogic.gdx.Application.ApplicationType.HeadlessDesktop) {
+		if (!headless) {
 			frontTexture = new Texture("Player-front.png");
 			backTexture = new Texture("Player-back.png");
 			sideTexture = new Texture("Player-side.png");

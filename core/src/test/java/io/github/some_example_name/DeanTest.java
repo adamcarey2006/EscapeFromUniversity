@@ -18,7 +18,7 @@ public class DeanTest extends HeadlessTest {
 
     @Before
     public void setUp() {
-        player = new Player(175f, 45f, "test");
+        player = new Player(175f, 45f, "test", true);
         dean = new Dean(90f, 450f, player);
 
         testGame = new MyGame();

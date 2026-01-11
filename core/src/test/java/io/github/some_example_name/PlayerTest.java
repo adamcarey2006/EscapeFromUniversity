@@ -13,7 +13,7 @@ public class PlayerTest {
 
     @Before
     public void setUp() {
-        player = new Player(145f, 70f, "test");
+        player = new Player(145f, 70f, "test", true);
     }
 
     // 4.1
