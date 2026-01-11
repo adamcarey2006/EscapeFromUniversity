@@ -53,7 +53,6 @@ public class EquationScreen implements Screen {
         Random random = new Random();
         this.a = random.nextInt(10) + 3;
         this.b = random.nextInt(10);
-        GameScreen.incrementPositiveEvents();
         if (random.nextBoolean()) {
             this.addition = true;
             this.correctAnswer = a + b;

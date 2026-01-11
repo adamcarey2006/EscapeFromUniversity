@@ -76,6 +76,11 @@ public class GameScreen implements Screen {
 	private boolean clockTimeBonusAdded = false;
 	private boolean ZzzzTimePenaltyAdded = false;
 
+	// New - display floating text once you interact with events that affect the
+	// timer
+	private String floatingText = "";
+	private float floatingTextTimer = 0f;
+
 	/**
 	 * Constructor for <code> GameScreen </code>, using the game creator
 	 * in <code> MyGame </code> to create all main game and UI assets.
@@ -219,6 +224,7 @@ public class GameScreen implements Screen {
 		// Decreases time if talked to survey NPC
 		if (survey.isTalked() && !surveyTimePenaltyAdded) {
 			gameTimer.decrementTimer(15f);
+			showFloatingText("Time taken: -15 seconds");
 			surveyTimePenaltyAdded = true;
 		}
 
@@ -227,6 +233,7 @@ public class GameScreen implements Screen {
 			gameTimer.incrementTimer(30f);
 			clockTimeBonusAdded = true;
 			incrementPositiveEvents();
+			showFloatingText("Time added: +30 seconds");
 			clock.render(batch);
 		}
 
@@ -235,6 +242,7 @@ public class GameScreen implements Screen {
 			gameTimer.decrementTimer(20f);
 			ZzzzTimePenaltyAdded = true;
 			incrementNegativeEvents();
+			showFloatingText("Time taken away: -20 seconds");
 			Zzzz.render(batch);
 		}
 
@@ -370,6 +378,12 @@ public class GameScreen implements Screen {
 		key.render(batch);
 		barrier.render(batch);
 		player.render(batch);
+
+		// Display floating text for events that affect the timer
+		if (floatingTextTimer > 0) {
+			floatingTextTimer -= delta;
+			font.draw(batch, floatingText, player.getPosition().x - 20, player.getPosition().y + 50);
+		}
 
 		if (busTicket != null && busTicket.isCollected()) {
 			busTicket.renderAsIcon(batch, camera);
@@ -600,6 +614,11 @@ public class GameScreen implements Screen {
 
 	public void addTime() {
 		gameTimer.incrementTimer(30f);
+	}
+
+	private void showFloatingText(String text) {
+		this.floatingText = text;
+		this.floatingTextTimer = 2.0f;
 	}
 
 	/** Unimplemented */
